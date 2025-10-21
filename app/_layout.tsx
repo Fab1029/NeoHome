@@ -1,12 +1,34 @@
-import { Stack } from "expo-router";
+import fonts from '@/constants/fonts';
+import { useFonts } from 'expo-font';
+import { SplashScreen, Stack } from "expo-router";
+import { useEffect } from "react";
 
 export default function RootLayout() {
-  return (
-    <Stack>
-      <Stack.Screen
-        name="(tabs)"
-        options={{ headerShown: false}}
-      />
-    </Stack>
-  )
+  
+  const [fontsLoaded] = useFonts(
+    {
+      Bold: fonts.fonts.Bold,
+      Medium: fonts.fonts.Medium,
+      Regular: fonts.fonts.Regular
+    }
+  );
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+
+  }, [fontsLoaded]);
+
+  if (fontsLoaded) {
+    return (
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false}}
+        />
+      </Stack>
+    )
+  };
+  
 }
