@@ -23,6 +23,7 @@ const TabsLayout = () => {
           marginHorizontal:20,
           
           height: 60,
+          position: 'absolute',
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: colors.surface.primary
