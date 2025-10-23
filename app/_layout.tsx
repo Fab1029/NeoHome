@@ -1,6 +1,7 @@
 import fonts from '@/constants/fonts';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
 
 export default function RootLayout() {
@@ -22,12 +23,18 @@ export default function RootLayout() {
 
   if (fontsLoaded) {
     return (
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="(tabs)"
-          options={{ headerShown: false}}
-        />
-      </Stack>
+
+      <>
+        <StatusBar style='dark'/>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false}}
+            />
+          </Stack>
+      </>
+        
+      
     )
   };
   

@@ -7,7 +7,7 @@ const BackGround = () => {
     <View
         style={{
             height: 200,
-            bottom: -20,
+            bottom: 0,
             width: '100%',
             position: 'absolute',
         }}
