@@ -1,6 +1,6 @@
-import Bold from '@/assets/fonts/Roboto-Bold.ttf';
-import Medium from '@/assets/fonts/Roboto-Medium.ttf';
-import Regular from '@/assets/fonts/Roboto-Regular.ttf';
+import Bold from '@/src/assets/fonts/Roboto-Bold.ttf';
+import Medium from '@/src/assets/fonts/Roboto-Medium.ttf';
+import Regular from '@/src/assets/fonts/Roboto-Regular.ttf';
 
 
 const fontSizes = {

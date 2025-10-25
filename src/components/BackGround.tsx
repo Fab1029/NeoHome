@@ -1,4 +1,4 @@
-import images from '@/constants/images'
+import images from '@/src/constants/images'
 import React from 'react'
 import { Image, View } from 'react-native'
 
