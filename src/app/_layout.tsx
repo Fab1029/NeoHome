@@ -1,11 +1,11 @@
-import fonts from '@/constants/fonts';
+import fonts from '@/src/constants/fonts';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
+import { PermissionProvider } from '../context/PermissionProvider';
 
 export default function RootLayout() {
-  
   const [fontsLoaded] = useFonts(
     {
       Bold: fonts.fonts.Bold,
@@ -14,6 +14,7 @@ export default function RootLayout() {
     }
   );
 
+  /* Cargar fuentes de textto */
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -21,20 +22,19 @@ export default function RootLayout() {
 
   }, [fontsLoaded]);
 
+
   if (fontsLoaded) {
     return (
 
-      <>
+      <PermissionProvider>
         <StatusBar style='dark'/>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              name="(tabs)"
-              options={{ headerShown: false}}
-            />
-          </Stack>
-      </>
-        
-      
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+            name="(tabs)"
+            options={{ headerShown: false}}
+          />
+        </Stack>
+      </PermissionProvider>
     )
   };
   
