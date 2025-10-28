@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import BasePermission from "../features/permissions/BasePermission";
-import NotificationPermission from "../features/permissions/NotificationPermission";
+import MicrophonePermission from "../features/permissions/MicrophonePermission";
+
 
 type PermissionMap = {
   [key: string]: BasePermission;
@@ -15,7 +16,7 @@ export const PermissionProvider: React.FC<{ children: ReactNode }> = ({ children
   useEffect(() => {
 
     setPermissions({
-      notification: new NotificationPermission(),
+      microphone: new MicrophonePermission(),
       // Agregar mas
     });
   }, []);

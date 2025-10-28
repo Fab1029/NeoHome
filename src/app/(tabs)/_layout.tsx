@@ -18,6 +18,7 @@ const TabsLayout = () => {
           justifyContent: 'center',
         },
         tabBarStyle: {
+          zIndex: 0,
           marginBottom:25,
           borderRadius: 50,
           marginHorizontal:20,
@@ -32,13 +33,12 @@ const TabsLayout = () => {
     >
       <Tabs.Screen
           name='command'
-          options={{
+          options={{ 
               title: 'Comandos',
               headerShown: false,
               tabBarIcon: ({focused}) => (
                   <TabIcon icon={icons.commandTabIcon} focused={focused} title='Comandos'/>
               )
-              
           }}
       />
 
@@ -50,7 +50,6 @@ const TabsLayout = () => {
               tabBarIcon: ({focused}) => (
                   <TabIcon icon={icons.voiceTabIcon} focused={focused} title='Voz'/>
               )
-              
           }}
       />
 
@@ -62,7 +61,6 @@ const TabsLayout = () => {
               tabBarIcon: ({focused}) => (
                   <TabIcon icon={icons.notificationTabIcon} focused={focused} title='Notificaciones'/>
               )
-              
           }}
       />
       

@@ -1,10 +1,11 @@
 import BackGround from '@/src/components/BackGround'
 import { colors } from '@/src/constants/colors'
 import React from 'react'
-import { Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const notify = () => {
+  const snapPoints = ['20%', '80%'];
+
   return (
     <SafeAreaView
       style={{
@@ -12,7 +13,6 @@ const notify = () => {
         backgroundColor: colors.background.primary
       }}
     >
-      <Text>notify</Text>
       <BackGround/>
     </SafeAreaView>
   )
