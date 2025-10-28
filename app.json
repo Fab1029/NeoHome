@@ -9,11 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSMicrophoneUsageDescription": "Esta app necesita acceso al micrófono para grabar audio.",
-        "NSUserNotificationUsageDescription": "Esta app necesita enviar notificaciones."
-      }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -23,8 +19,7 @@
         "monochromeImage": "./src/assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "permissions": ["RECORD_AUDIO", "NOTIFICATIONS"]
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -42,6 +37,12 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow NeoHome to access your microphone."
         }
       ]
     ],

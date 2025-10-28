@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PermissionProvider } from '../context/PermissionProvider';
 
 export default function RootLayout() {
@@ -25,16 +26,20 @@ export default function RootLayout() {
 
   if (fontsLoaded) {
     return (
-
-      <PermissionProvider>
-        <StatusBar style='dark'/>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false}}
-          />
-        </Stack>
-      </PermissionProvider>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <PermissionProvider>
+          <StatusBar style='dark'/>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false}}
+            />
+          </Stack>
+        </PermissionProvider>
+      </GestureHandlerRootView>
+      
+      
+      
     )
   };
   
