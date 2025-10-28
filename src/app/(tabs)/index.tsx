@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+
 export default function Index() {
   const [recording, setRecording] = useState(null);
   const [textRecording, setTextRecording] = useState(recordingTexts[0]);
@@ -38,8 +39,7 @@ export default function Index() {
 
       <RecordButton setTextRecording={setTextRecording} setRecording={setRecording}/>
 
-      <CommandAction name={actuators[0].name} icon={actuators[0].icon} state={actuators[0].state}/>
-      
+      <CommandAction name={actuators[0].name} icon={actuators[0].icon} state={actuators[0].state} isLoading={true}/>
       <BackGround/>
     </SafeAreaView>
   );
