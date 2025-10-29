@@ -4,7 +4,7 @@ import LoadingSkeleton from "@/src/components/LoadingSkeleton";
 import RecordButton from "@/src/components/RecordButton";
 import { colors } from "@/src/constants/colors";
 import fonts from "@/src/constants/fonts";
-import { actuators } from "@/src/data/Actuators";
+import { Action } from "@/src/models/Action";
 import { recordingTexts } from "@/src/utils/generals";
 import { useState } from "react";
 import { Text } from "react-native";
@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function Index() {
-  const [action, setAction] = useState(null);
+  const [action, setAction] = useState<Action>();
   const [processingAudio, setProcessingAudio] = useState(false);
   const [textRecording, setTextRecording] = useState(recordingTexts[0]);
   
@@ -46,7 +46,16 @@ export default function Index() {
       )}
 
       {action && (
-        <CommandAction name={actuators[0].name} icon={actuators[0].icon} state={actuators[0].state}/>
+        <CommandAction
+          name={action.name}
+          icon={action.icon}
+          state={action.state}
+          onHide={() => {
+            setAction(undefined);
+            setProcessingAudio(false);
+            setTextRecording(recordingTexts[0]);
+          }}
+        />
       )}
 
       <BackGround/>

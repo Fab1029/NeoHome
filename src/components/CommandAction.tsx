@@ -1,18 +1,43 @@
-import React from 'react';
-import { Image, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Image, Text, View } from 'react-native';
 import { colors } from '../constants/colors';
 import fonts from '../constants/fonts';
 
-interface CommandProps {
-    name: string;
-    icon: any;
-    state: string;
+interface CommandActionProps {
+  name: string;
+  icon: any;
+  state: string;
+  onHide?: () => void;
 }
 
-const CommandAction = ({name, icon, state}: CommandProps) => {
+const CommandAction = ({ name, icon, state, onHide }: CommandActionProps) => {
+  const opacity = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current; 
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 40, duration: 400, useNativeDriver: true }),
+      ]).start(({ finished }) => {
+        if (finished && onHide) onHide();
+      });
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
-    <View
+    <Animated.View
+      style={{
+        opacity,
+        transform: [{ translateY }],
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+      }}
+    >
+      <View
         style={{
             padding: 10,   
             width: '70%',    
@@ -24,7 +49,7 @@ const CommandAction = ({name, icon, state}: CommandProps) => {
             backgroundColor: state.toLowerCase() === 'on' ? colors.secondary : colors.surface.secondary
             
         }}
-    >
+      >
         <View
             style={{
                 width: 40,
@@ -75,8 +100,9 @@ const CommandAction = ({name, icon, state}: CommandProps) => {
                 {state}
             </Text>
         </View> 
-    </View>
-  )
-}
+      </View>
+    </Animated.View>
+  );
+};
 
-export default CommandAction
+export default CommandAction;

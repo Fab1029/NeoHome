@@ -13,19 +13,14 @@ class APIClassifier implements Classifier {
     const header = `
       Eres un clasificador experto. 
       Tienes una lista de dispositivos con sus comandos. 
-      Tu tarea es interpretar una orden del usuario (en español) y devolver el objeto JSON del dispositivo afectado,
-      incluyendo el comando correcto ("commandOn" o "commandOff") según la acción.
+      Tu tarea es interpretar una orden del usuario (en español) y devolver el comando del objeto del dispositivo afectado.
     `;
 
     const main = JSON.stringify(actuators);
 
-    /*actuators.map((actuator) => `
-      Dispositivo: ${actuator.name}, Encender: ${actuator.commandOn}, Apagar: ${actuator.commandOff}
-    `).join('\n');*/
-
     const footer = `
       IMPORTANTE:
-      - Devuelve solo JSON válido.
+      - Devuelve solo el identificador válido.
       - No incluyas texto adicional ni explicaciones.
       - Si la orden no coincide con ningún dispositivo, responde: con una cadena vacia.
     `
@@ -35,7 +30,6 @@ class APIClassifier implements Classifier {
 
   async execute(data: string): Promise<string> {
     try {
-      console.log(this.basePrompt);
       const response = await this.ai.models.generateContent({
         model: this.model,
         contents: `${this.basePrompt}\nUsuario:${data}`,

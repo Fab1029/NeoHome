@@ -14,7 +14,7 @@ const LoadingSkeleton = () => {
             alignItems: 'center',
             flexDirection: 'row',
             justifyContent: 'space-between',
-            backgroundColor: colors.surface.primary
+            backgroundColor: colors.surface.secondary
         }}
     >
         <Skeleton colorMode='light' width={40} height={40} radius={100}/>

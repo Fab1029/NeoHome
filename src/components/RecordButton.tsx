@@ -3,10 +3,9 @@ import React, { useRef, useState } from 'react';
 import { Alert, Animated, Image, TouchableWithoutFeedback, View } from 'react-native';
 import { colors } from '../constants/colors';
 import icons from '../constants/icons';
+import { actuators } from "../data/Actuators";
 import APIClassifier from "../features/classifier/APIClassifier";
 import { Classifier } from "../features/classifier/Classifier";
-import AudioConverter from "../features/convert/AudioConverter";
-import Converter from "../features/convert/Converter";
 import { usePermission } from '../hooks/UsePermission';
 import { recordingTexts } from "../utils/generals";
 
@@ -21,17 +20,18 @@ const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordB
   const micPermission = permissions?.microphone;
   const classifier: Classifier = new APIClassifier();
   const [isDisableButton, setIsDisableButton] = useState(false);
-  const converter: Converter = new Converter(new AudioConverter());
+  /*const converter: Converter = new Converter(new AudioConverter());*/
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   
-  // Animations
+  // Animaciones
   const outerScale = useRef(new Animated.Value(1)).current;
   const middleScale = useRef(new Animated.Value(1)).current;
 
+  // Referencias a acciones dinamicas
   let loopAnimation: Animated.CompositeAnimation | null = null;
+  const recordingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startPulse = () => {
-    // Animación que “respira” los círculos
     loopAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(outerScale, { toValue: 1.05, duration: 900, useNativeDriver: true }),
@@ -81,14 +81,24 @@ const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordB
       setTextRecording(recordingTexts[1]);
       startPulse(); 
 
+      // Al comenzar la grabacion el usario unicamente podra grabar por 10 segundos
+      recordingTimeoutRef.current = setTimeout(() => {
+        stopRecording(); 
+      }, 8000);
+
     } catch (err) {
-      console.log(err)
       Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde")
     }
   };
 
   const stopRecording = async () => {
     try {
+      // Limpiar la referencia si se paro antes del tiempo acordado
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
+
       await audioRecorder.stop();
 
       setIsDisableButton(true);
@@ -98,28 +108,31 @@ const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordB
       stopPulse(); 
 
       /* Realizar acciones de consultas a sistemas externos */
-      const audioUri = audioRecorder.uri;
-      //const text = await converter.convert(audioUri);
-      const text = 'Prende el foco';
-      const data = await classifier.execute(text);
-      console.log(data);
-      /*
-      if (text) {
-        console.log(text);
+      //const audioUri = audioRecorder.uri;
+      const commandResponse = await classifier.execute("Enciende el foco");
+      
+      if (commandResponse) {
+        // Enviar el comando ARDUINO
+        
+        setTextRecording(recordingTexts[3]);
+        const action = actuators.find(actuator => commandResponse === actuator.commandOn || commandResponse === actuator.commandOff);
+        
+        setAction(
+          {
+            icon: action?.icon,
+            name: action?.name,
+            state: action?.commandOn === commandResponse ? 'on' : 'off'
+          }
+        );
       }
       else {
-        Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde");
-      }*/
+        Alert.alert("No se pudo realizar el comando, inténtalo más tarde");
+      }
 
     } catch (err) {
       Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde");
     } finally {
-      setTimeout(() => {
-        setAction(null);
-        setIsDisableButton(false); 
-        setProcessingAudio(false);
-        setTextRecording(recordingTexts[0]);
-      }, 5000);
+      setIsDisableButton(false);
     }
   };
 
