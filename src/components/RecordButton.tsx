@@ -1,23 +1,29 @@
 import { RecordingPresets, useAudioRecorder } from "expo-audio";
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Alert, Animated, Image, TouchableWithoutFeedback, View } from 'react-native';
 import { colors } from '../constants/colors';
 import icons from '../constants/icons';
+import APIClassifier from "../features/classifier/APIClassifier";
+import { Classifier } from "../features/classifier/Classifier";
+import AudioConverter from "../features/convert/AudioConverter";
+import Converter from "../features/convert/Converter";
 import { usePermission } from '../hooks/UsePermission';
 import { recordingTexts } from "../utils/generals";
 
 interface RecordButtonProps {
-    setRecording: any;
-    setTextRecording: any;
-    isLoading: boolean;
-    setIsLoading : (value: boolean) => void;
+  setAction:any;
+  setTextRecording: any;
+  setProcessingAudio: any;
 }
 
-const RecordButton = ({setTextRecording, setRecording, isLoading ,setIsLoading}: RecordButtonProps) => {
+const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordButtonProps) => {
   const permissions = usePermission();
   const micPermission = permissions?.microphone;
+  const classifier: Classifier = new APIClassifier();
+  const [isDisableButton, setIsDisableButton] = useState(false);
+  const converter: Converter = new Converter(new AudioConverter());
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-
+  
   // Animations
   const outerScale = useRef(new Animated.Value(1)).current;
   const middleScale = useRef(new Animated.Value(1)).current;
@@ -57,20 +63,22 @@ const RecordButton = ({setTextRecording, setRecording, isLoading ,setIsLoading}:
 
   };
 
+  
   const startRecording = async () => {
     try {
       if (!micPermission) return;
 
       const granted = await micPermission.isGranted();
+      
       if (!granted) {
         await micPermission.request();
         return;
       }
 
       await audioRecorder.prepareToRecordAsync();
-      audioRecorder.record();    
-      setTextRecording(recordingTexts[1]);
+      audioRecorder.record();  
 
+      setTextRecording(recordingTexts[1]);
       startPulse(); 
 
     } catch (err) {
@@ -82,20 +90,42 @@ const RecordButton = ({setTextRecording, setRecording, isLoading ,setIsLoading}:
   const stopRecording = async () => {
     try {
       await audioRecorder.stop();
-      setIsLoading(true);
-      setRecording(audioRecorder.uri);
+
+      setIsDisableButton(true);
+      setProcessingAudio(true);
       setTextRecording(recordingTexts[2]);
 
       stopPulse(); 
 
+      /* Realizar acciones de consultas a sistemas externos */
+      const audioUri = audioRecorder.uri;
+      //const text = await converter.convert(audioUri);
+      const text = 'Prende el foco';
+      const data = await classifier.execute(text);
+      console.log(data);
+      /*
+      if (text) {
+        console.log(text);
+      }
+      else {
+        Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde");
+      }*/
+
     } catch (err) {
-      Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde")
+      Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde");
+    } finally {
+      setTimeout(() => {
+        setAction(null);
+        setIsDisableButton(false); 
+        setProcessingAudio(false);
+        setTextRecording(recordingTexts[0]);
+      }, 5000);
     }
   };
 
   return (
     <TouchableWithoutFeedback 
-        disabled={isLoading}
+        disabled={isDisableButton}
         onPressIn={startRecording}
         onPressOut={stopRecording}
     >
