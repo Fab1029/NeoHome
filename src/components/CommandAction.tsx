@@ -1,41 +1,43 @@
-import { Skeleton } from "moti/skeleton";
-import React from 'react';
-import { Image, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Image, Text, View } from 'react-native';
 import { colors } from '../constants/colors';
 import fonts from '../constants/fonts';
 
-interface CommandProps {
-    name: string;
-    icon: any;
-    state: string;
-    isLoading: boolean
+interface CommandActionProps {
+  name: string;
+  icon: any;
+  state: string;
+  onHide?: () => void;
 }
 
-const CommandAction = ({name, icon, state, isLoading}: CommandProps) => {
+const CommandAction = ({ name, icon, state, onHide }: CommandActionProps) => {
+  const opacity = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current; 
 
-  if (isLoading) {
-    return (
-        <View
-            style={{
-                padding: 10,   
-                width: '70%',    
-                borderRadius: 25,
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 40, duration: 400, useNativeDriver: true }),
+      ]).start(({ finished }) => {
+        if (finished && onHide) onHide();
+      });
+    }, 2000);
 
-                alignItems: 'center',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                backgroundColor: state.toLowerCase() === 'on' ? colors.secondary : colors.surface.secondary
-            }}
-        >
-            <Skeleton colorMode='light' width={40} height={40} radius={100}/>
-            <Skeleton colorMode='light' width={100} height={40} radius={100}/>
-            <Skeleton colorMode='light' width={40} height={25} radius={10}/>
-        </View>
-    )
-  }
-  
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
-    <View
+    <Animated.View
+      style={{
+        opacity,
+        transform: [{ translateY }],
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+      }}
+    >
+      <View
         style={{
             padding: 10,   
             width: '70%',    
@@ -47,7 +49,7 @@ const CommandAction = ({name, icon, state, isLoading}: CommandProps) => {
             backgroundColor: state.toLowerCase() === 'on' ? colors.secondary : colors.surface.secondary
             
         }}
-    >
+      >
         <View
             style={{
                 width: 40,
@@ -98,8 +100,9 @@ const CommandAction = ({name, icon, state, isLoading}: CommandProps) => {
                 {state}
             </Text>
         </View> 
-    </View>
-  )
-}
+      </View>
+    </Animated.View>
+  );
+};
 
-export default CommandAction
+export default CommandAction;

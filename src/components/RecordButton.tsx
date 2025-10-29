@@ -1,31 +1,37 @@
 import { RecordingPresets, useAudioRecorder } from "expo-audio";
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Alert, Animated, Image, TouchableWithoutFeedback, View } from 'react-native';
 import { colors } from '../constants/colors';
 import icons from '../constants/icons';
+import { actuators } from "../data/Actuators";
+import APIClassifier from "../features/classifier/APIClassifier";
+import { Classifier } from "../features/classifier/Classifier";
 import { usePermission } from '../hooks/UsePermission';
 import { recordingTexts } from "../utils/generals";
 
 interface RecordButtonProps {
-    setRecording: any;
-    setTextRecording: any;
-    isLoading: boolean;
-    setIsLoading : (value: boolean) => void;
+  setAction:any;
+  setTextRecording: any;
+  setProcessingAudio: any;
 }
 
-const RecordButton = ({setTextRecording, setRecording, isLoading ,setIsLoading}: RecordButtonProps) => {
+const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordButtonProps) => {
   const permissions = usePermission();
   const micPermission = permissions?.microphone;
+  const classifier: Classifier = new APIClassifier();
+  const [isDisableButton, setIsDisableButton] = useState(false);
+  /*const converter: Converter = new Converter(new AudioConverter());*/
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-
-  // Animations
+  
+  // Animaciones
   const outerScale = useRef(new Animated.Value(1)).current;
   const middleScale = useRef(new Animated.Value(1)).current;
 
+  // Referencias a acciones dinamicas
   let loopAnimation: Animated.CompositeAnimation | null = null;
+  const recordingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startPulse = () => {
-    // Animación que “respira” los círculos
     loopAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(outerScale, { toValue: 1.05, duration: 900, useNativeDriver: true }),
@@ -57,45 +63,82 @@ const RecordButton = ({setTextRecording, setRecording, isLoading ,setIsLoading}:
 
   };
 
+  
   const startRecording = async () => {
     try {
       if (!micPermission) return;
 
       const granted = await micPermission.isGranted();
+      
       if (!granted) {
         await micPermission.request();
         return;
       }
 
       await audioRecorder.prepareToRecordAsync();
-      audioRecorder.record();    
-      setTextRecording(recordingTexts[1]);
+      audioRecorder.record();  
 
+      setTextRecording(recordingTexts[1]);
       startPulse(); 
 
+      // Al comenzar la grabacion el usario unicamente podra grabar por 10 segundos
+      recordingTimeoutRef.current = setTimeout(() => {
+        stopRecording(); 
+      }, 8000);
+
     } catch (err) {
-      console.log(err)
       Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde")
     }
   };
 
   const stopRecording = async () => {
     try {
+      // Limpiar la referencia si se paro antes del tiempo acordado
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
+
       await audioRecorder.stop();
-      setIsLoading(true);
-      setRecording(audioRecorder.uri);
+
+      setIsDisableButton(true);
+      setProcessingAudio(true);
       setTextRecording(recordingTexts[2]);
 
       stopPulse(); 
 
+      /* Realizar acciones de consultas a sistemas externos */
+      //const audioUri = audioRecorder.uri;
+      const commandResponse = await classifier.execute("Enciende el foco");
+      
+      if (commandResponse) {
+        // Enviar el comando ARDUINO
+        
+        setTextRecording(recordingTexts[3]);
+        const action = actuators.find(actuator => commandResponse === actuator.commandOn || commandResponse === actuator.commandOff);
+        
+        setAction(
+          {
+            icon: action?.icon,
+            name: action?.name,
+            state: action?.commandOn === commandResponse ? 'on' : 'off'
+          }
+        );
+      }
+      else {
+        Alert.alert("No se pudo realizar el comando, inténtalo más tarde");
+      }
+
     } catch (err) {
-      Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde")
+      Alert.alert("No se pudo iniciar la grabación por el momento, inténtalo más tarde");
+    } finally {
+      setIsDisableButton(false);
     }
   };
 
   return (
     <TouchableWithoutFeedback 
-        disabled={isLoading}
+        disabled={isDisableButton}
         onPressIn={startRecording}
         onPressOut={stopRecording}
     >
