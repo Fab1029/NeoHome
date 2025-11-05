@@ -1,4 +1,3 @@
-// Filter.tsx
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -34,15 +33,22 @@ const Filter = ({ selectedFilter, setSelectedFilter, bottomSheetRef }: FilterPro
       snapPoints={snapPoints}
       enablePanDownToClose
       backgroundStyle={{ backgroundColor: colors.background.primary }}
+      enableOverDrag={false} 
+      enableDynamicSizing={false}
+      animateOnMount={false}
+      onChange={(index) => {
+        if (index !== 0 && index !== -1) {
+          bottomSheetRef.current?.close();
+        }
+      }}
     >
       <BottomSheetView>
-        
         <View
           style={{
             position: 'relative'
           }}
         >
-          <View/>
+          <View />
           <Text
             style={{
               fontFamily: 'Bold',
@@ -69,19 +75,28 @@ const Filter = ({ selectedFilter, setSelectedFilter, bottomSheetRef }: FilterPro
               }}
             >
               Reset
-            </Text> 
+            </Text>
           </TouchableOpacity>
         </View>
 
         <View
           style={{
-            paddingHorizontal: 10
+            paddingHorizontal: 10,
+            paddingVertical: 10,
+            gap:16
           }}
         >
-          <CustomSwitch name='Sensores' filter = {selectedFilter[0]} onChange={handleSelectFilters}/>
-          <CustomSwitch name='Actuadores' filter = {selectedFilter[1]} onChange={handleSelectFilters}/>
+          <CustomSwitch
+            name='Sensores'
+            filter={selectedFilter[0]}
+            onChange={handleSelectFilters}
+          />
+          <CustomSwitch
+            name='Actuadores'
+            filter={selectedFilter[1]}
+            onChange={handleSelectFilters}
+          />
         </View>
-
       </BottomSheetView>
     </BottomSheet>
   );
