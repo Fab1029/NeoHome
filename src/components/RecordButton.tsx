@@ -4,8 +4,11 @@ import { Alert, Animated, Image, TouchableWithoutFeedback, View } from 'react-na
 import { colors } from '../constants/colors';
 import icons from '../constants/icons';
 import { actuators } from "../data/Actuators";
+
 import APIClassifier from "../features/classifier/APIClassifier";
-import { Classifier } from "../features/classifier/Classifier";
+import Classifier from "../features/classifier/Classifier";
+import APISpeechToText from "../features/convert/APISpeechToText";
+import Converter from "../features/convert/Converter";
 import { usePermission } from '../hooks/UsePermission';
 import { recordingTexts } from "../utils/generals";
 
@@ -18,8 +21,9 @@ interface RecordButtonProps {
 const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordButtonProps) => {
   const permissions = usePermission();
   const micPermission = permissions?.microphone;
-  const classifier: Classifier = new APIClassifier();
   const [isDisableButton, setIsDisableButton] = useState(false);
+  const converter: Converter = new Converter(new APISpeechToText());
+  const classifier: Classifier = new Classifier(new APIClassifier());
   /*const converter: Converter = new Converter(new AudioConverter());*/
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   
@@ -108,8 +112,11 @@ const RecordButton = ({setTextRecording, setAction, setProcessingAudio}: RecordB
       stopPulse(); 
 
       /* Realizar acciones de consultas a sistemas externos */
-      //const audioUri = audioRecorder.uri;
-      const commandResponse = await classifier.execute("Enciende el foco");
+      const audioUri = audioRecorder.uri;
+      console.log(audioUri);
+      const text1 = await converter.convert(audioUri);
+      console.log(text1);
+      const commandResponse = await classifier.clasify("Enciende el foco");
       
       if (commandResponse) {
         // Enviar el comando ARDUINO

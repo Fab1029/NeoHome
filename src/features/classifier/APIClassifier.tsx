@@ -1,8 +1,8 @@
 import { actuators } from "@/src/data/Actuators";
 import { GoogleGenAI } from "@google/genai";
-import { Classifier } from "./Classifier";
+import { MethodClassifier } from "./MethodClassifier";
 
-class APIClassifier implements Classifier {
+class APIClassifier implements MethodClassifier {
   private API_KEY = process.env.EXPO_PUBLIC_API_GEMINI;
 
   private model: string = "gemini-2.5-flash";

@@ -4,8 +4,8 @@ import { colors } from '../constants/colors';
 import fonts from '../constants/fonts';
 
 interface CommandActionProps {
-  name: string;
   icon: any;
+  name: string;
   state: string;
   onHide?: () => void;
 }
