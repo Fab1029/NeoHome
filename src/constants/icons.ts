@@ -11,6 +11,11 @@ import movementIcon from "@/src/assets/icons/movement.png";
 import notificationTabIcon from "@/src/assets/icons/notificationTab.png";
 import playIcon from "@/src/assets/icons/play.png";
 import voiceTabIcon from "@/src/assets/icons/voiceTab.png";
+import birthdaySongIcon from "@/src/assets/icons/birthdaySong.png"
+import odeToJoySongIcon from "@/src/assets/icons/odeToJoySong.png"
+import windowIcon from "@/src/assets/icons/window.png"
+import fanIcon from "@/src/assets/icons/fun.png"
+import releIcon from "@/src/assets/icons/rele.png"
 
 export default {
   closeIcon,
@@ -25,5 +30,10 @@ export default {
   humidityIcon,
   lightIcon,
   movementIcon,
-  gasICon
+  gasICon,
+  birthdaySongIcon,
+  odeToJoySongIcon,
+  windowIcon,
+  fanIcon, 
+  releIcon,
 };
