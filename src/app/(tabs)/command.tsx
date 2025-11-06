@@ -67,8 +67,7 @@ const Command = () => {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                justifyContent: 'flex-start',
-                columnGap: 12,
+                justifyContent: 'space-between',
                 rowGap: 10
               }}
             >
@@ -97,8 +96,7 @@ const Command = () => {
             style={{
               flexDirection: 'row',
               flexWrap: 'wrap',
-              justifyContent: 'flex-start',
-              columnGap: 12,
+              justifyContent: 'space-between',
               rowGap: 10
             }}
           >
