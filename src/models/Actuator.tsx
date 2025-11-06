@@ -4,5 +4,8 @@ export interface Actuator {
     icon: any;
     commandOn: string;
     commandOff: string;
+    commandMove?: string;
+    angleValue?: string;
+    intensity?: string;
     state: string;
 }

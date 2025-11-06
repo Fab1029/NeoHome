@@ -4,9 +4,25 @@ import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
 import { Actuator } from '../models/Actuator'
 
-const ActuatorCard = ({id, name, icon, commandOn, commandOff, state}: Actuator) => {
+type Props = Actuator & {
+  onPress: () => void;
+};
+
+const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, onPress}: Props) => {
+  const handlePress = () => {
+    if (state.toLocaleLowerCase() === 'on') {
+      console.log(`Apagando ${name} con comando: ${commandOff}`);
+      //lamar al servicio que conecta con el bluetooh o devuelve al padre y el padre llaama a la funcion con bluetoh
+    } else {
+      console.log(`Prendiendo ${name} con comando: ${commandOn}`);
+      //lamar al servicio que conecta con el bluetooh
+    }
+    onPress(); //cambia el estado del actuator en el useState de command.tsx
+  }
+
   return (
     <TouchableOpacity
+      onPress={handlePress}
       style={[
         {width: 150 , height: 135, padding: 10, borderRadius: 25, backgroundColor: colors.surface.secondary, justifyContent: 'space-between'}, 
         state.toLocaleLowerCase() === 'on' && 
@@ -23,7 +39,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state}: Actuator) 
       <Text
         style={{
           fontFamily: 'Bold',
-          fontSize: fonts.sizes.xlarge,
+          fontSize: fonts.sizes.large,
           color: state.toLocaleLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
         }}
       >
