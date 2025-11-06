@@ -16,6 +16,8 @@ import odeToJoySongIcon from "@/src/assets/icons/odeToJoySong.png"
 import windowIcon from "@/src/assets/icons/window.png"
 import fanIcon from "@/src/assets/icons/fun.png"
 import releIcon from "@/src/assets/icons/rele.png"
+import waterIcon from "@/src/assets/icons/water.png"
+import soilIcon from "@/src/assets/icons/soil.png"
 
 export default {
   closeIcon,
@@ -36,4 +38,6 @@ export default {
   windowIcon,
   fanIcon, 
   releIcon,
+  waterIcon,
+  soilIcon,
 };

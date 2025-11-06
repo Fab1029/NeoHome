@@ -12,6 +12,14 @@ export const actuators: Actuator[] = [
     state: 'Off'
   },
   {
+    id: 'beedromLight',  //pin 5
+    name: 'Foco Dormitorio',
+    icon: icons.lightBulbIcon,
+    commandOn: 'p',
+    commandOff: 'q',
+    state: 'Off'
+  },
+  {
     id: 'rele',  //activa el rele PIN 13
     name: 'Rele',
     icon: icons.releIcon,
@@ -29,7 +37,7 @@ export const actuators: Actuator[] = [
   },
   {
     id: 'odeToJoySong',
-    name: 'Cancion Himno Alegria',
+    name: 'Cancion Alegria',
     icon: icons.odeToJoySongIcon,
     commandOn: 'f',
     commandOff: 'g',  //detener musica pin 3
@@ -55,14 +63,6 @@ export const actuators: Actuator[] = [
     state: 'Off'
   },
   {
-    id: 'beedromLight',  //pin 5
-    name: 'Foco Dormitorio',
-    icon: icons.lightBulbIcon,
-    commandOn: 'p',
-    commandOff: 'q',
-    state: 'Off'
-  },
-  {
     id: 'fan',
     name: 'Ventilador',
     icon: icons.fanIcon,
@@ -74,10 +74,10 @@ export const actuators: Actuator[] = [
   {
     id: 'led',  //revisar
     name: 'Led',
-    icon: icons.releIcon,
-    commandOn: 'v',
-    commandOff: 'v', 
-    intensity: 'v0#',
+    icon: icons.lightBulbIcon,
+    commandOn: 'v125#',
+    commandOff: 'v0#', 
+    intensity: 'v125#',
     state: 'Off'
   },
 ]

@@ -6,7 +6,7 @@ import SensorCard from '@/src/components/SensorCard'
 import { colors } from '@/src/constants/colors'
 import fonts from '@/src/constants/fonts'
 import icons from '@/src/constants/icons'
-import { actuators } from '@/src/data/Actuators'
+import { actuators as initialActuators } from '@/src/data/Actuators'
 import { sensors } from '@/src/data/Sensors'
 import { filters } from '@/src/utils/generals'
 import BottomSheet from '@gorhom/bottom-sheet'
@@ -17,7 +17,18 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 const Command = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [selectedFilter, setSelectedFilter] = useState(filters);
+  const [actuators, setActuators] = useState(initialActuators);
   
+  const toggleActuator = (id: string) => {
+    setActuators(prev => 
+      prev.map(act => 
+        act.id === id
+          ? {...act, state: act.state === "On" ? "Off" : "On"}
+          : act
+      )
+    );
+  };
+
   const handleOpenFilter = () => {
     bottomSheetRef.current?.expand();
   };
@@ -101,7 +112,7 @@ const Command = () => {
             }}
           >
             {actuators.map((item) => (
-              <ActuatorCard key={item.id} {...item} />
+              <ActuatorCard key={item.id} {...item} onPress={() => toggleActuator(item.id)}/>
             ))}
           </View>
           </>
