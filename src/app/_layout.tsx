@@ -4,6 +4,8 @@ import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from '../components/ToastConfig';
 import { PermissionProvider } from '../context/PermissionProvider';
 
 export default function RootLayout() {
@@ -35,6 +37,7 @@ export default function RootLayout() {
               options={{ headerShown: false}}
             />
           </Stack>
+          <Toast config={toastConfig}/>
         </PermissionProvider>
       </GestureHandlerRootView>
       

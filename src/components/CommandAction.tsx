@@ -30,75 +30,75 @@ const CommandAction = ({ name, icon, state, onHide }: CommandActionProps) => {
   return (
     <Animated.View
       style={{
-        opacity,
-        transform: [{ translateY }],
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 10,
+      opacity,
+      transform: [{ translateY }],
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginVertical: 10,
       }}
     >
       <View
         style={{
-            padding: 10,   
-            width: '70%',    
-            borderRadius: 25,
+          padding: 10,   
+          width: '70%',    
+          borderRadius: 25,
 
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            backgroundColor: state.toLowerCase() === 'on' ? colors.secondary : colors.surface.secondary
+          alignItems: 'center',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          backgroundColor: state.toLowerCase() === 'on' ? colors.secondary : colors.surface.secondary
             
         }}
       >
         <View
-            style={{
-                width: 40,
-                height: 40,
-                padding: 5,
-                alignItems: 'center',
-                borderRadius: '100%',
-                justifyContent: 'center',
-                backgroundColor: colors.surface.primary,
-            }}
+          style={{
+            width: 40,
+            height: 40,
+            padding: 5,
+            alignItems: 'center',
+            borderRadius: '100%',
+            justifyContent: 'center',
+            backgroundColor: colors.surface.primary,
+          }}
         >
-            <Image 
-                source={icon}
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    resizeMode: 'cover',
-                    tintColor: state.toLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
-                }}
-            />
+          <Image 
+            source={icon}
+            style={{
+              width: '100%',
+              height: '100%',
+              resizeMode: 'cover',
+              tintColor: state.toLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
+            }}
+          />
         </View>
         <Text
-            style={{
-                fontFamily: 'Bold',
-                fontSize: fonts.sizes.large,
-                color: state.toLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
-            }}
+          style={{
+            fontFamily: 'Bold',
+            fontSize: fonts.sizes.large,
+            color: state.toLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
+          }}
         >
-            {name}
+          {name}
         </Text>
         <View
-            style={{
-                borderRadius: 15,
-                paddingVertical: 5,
-                paddingHorizontal: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: colors.surface.primary,
-            }}
+          style={{
+            borderRadius: 15,
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.surface.primary,
+          }}
         >
-            <Text
-                style={{
-                    fontFamily: 'Bold',
-                    fontSize: fonts.sizes.medium,
-                    color: state.toLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
-                }}
-            >
-                {state}
-            </Text>
+          <Text
+            style={{
+              fontFamily: 'Bold',
+              fontSize: fonts.sizes.medium,
+              color: state.toLowerCase() === 'on' ? colors.text.tertiary : colors.text.primary
+            }}
+          >
+            {state}
+          </Text>
         </View> 
       </View>
     </Animated.View>

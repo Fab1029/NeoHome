@@ -15,7 +15,6 @@ export default function Index() {
   const [action, setAction] = useState<Action>();
   const [processingAudio, setProcessingAudio] = useState(false);
   const [textRecording, setTextRecording] = useState(recordingTexts[0]);
-  
 
   return (
     <SafeAreaView
@@ -59,6 +58,9 @@ export default function Index() {
       )}
 
       <BackGround/>
+
+      
+     
     </SafeAreaView>
   );
 }
