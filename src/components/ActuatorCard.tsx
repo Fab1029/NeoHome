@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
+import Slider from '@react-native-community/slider'
 import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
 import { Actuator } from '../models/Actuator'
@@ -8,7 +9,10 @@ type Props = Actuator & {
   onPress: () => void;
 };
 
-const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, onPress}: Props) => {
+const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue, intensity, onPress}: Props) => {
+  const [sliderValue, setSliderValue] = useState(50);
+  const hasSlider = !!angleValue || !!intensity;
+
   const handlePress = () => {
     if (state.toLocaleLowerCase() === 'on') {
       console.log(`Apagando ${name} con comando: ${commandOff}`);
@@ -20,12 +24,14 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, onPress}: P
     onPress(); //cambia el estado del actuator en el useState de command.tsx
   }
 
+  const isOn = state.toLocaleLowerCase() === 'on';
+
   return (
     <TouchableOpacity
       onPress={handlePress}
       style={[
-        {width: 150 , height: 135, padding: 10, borderRadius: 25, backgroundColor: colors.surface.secondary, justifyContent: 'space-between'}, 
-        state.toLocaleLowerCase() === 'on' && 
+        {width: '45%' , height: 160, padding: 10, borderRadius: 25, backgroundColor: colors.surface.secondary, justifyContent: 'space-between'}, 
+        isOn && 
         {
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 6 },
@@ -45,6 +51,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, onPress}: P
       >
         {name}
       </Text>
+
       <Text
         style={{
           fontFamily: 'Medium',
@@ -75,6 +82,28 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, onPress}: P
           source={icon}
         />
       </View>
+
+      {isOn && hasSlider && (
+        <View
+          style={{flexDirection:'row', alignItems:'center', gap:5}}
+        >
+          <Slider
+          style={{ flex: 1, height: 30, transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
+          /*style={{ flex: 1, height: 30 }}*/ //para iphone
+          minimumValue={0}
+          maximumValue={100}
+          step={1}
+          minimumTrackTintColor={colors.background.primary}
+          maximumTrackTintColor={colors.surface.primary}
+          thumbTintColor={colors.text.primary}
+          value={sliderValue}
+          onValueChange={setSliderValue}
+        />
+        <Text style={{color: colors.background.primary}}>
+          {sliderValue}%
+        </Text>
+        </View>
+      )}
     </TouchableOpacity>
   )
 }

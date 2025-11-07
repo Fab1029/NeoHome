@@ -8,7 +8,7 @@ const SensorCard = ({id, name, icon, command}: Sensor) => {
   return (
     <View
         style={{
-            width: 150 , 
+            width: '100%' , 
             height: 135, 
             padding: 10, borderRadius: 25, 
             backgroundColor: colors.surface.secondary, justifyContent: 'space-between'
@@ -23,6 +23,8 @@ const SensorCard = ({id, name, icon, command}: Sensor) => {
         >
             {name}
         </Text>
+        <Text>Info Sensor</Text>
+        
         <View
             style={{
                 padding: 5,
@@ -31,6 +33,7 @@ const SensorCard = ({id, name, icon, command}: Sensor) => {
                 borderRadius: '100%',
                 alignItems: 'center',
                 justifyContent: 'center',
+                alignSelf: 'flex-end',
                 backgroundColor: colors.surface.primary
             }}
         >

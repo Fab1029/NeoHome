@@ -27,7 +27,7 @@ const TabsLayout = () => {
           position: 'absolute',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: colors.surface.primary
+          backgroundColor: colors.background.primary
         }
       }}
     >

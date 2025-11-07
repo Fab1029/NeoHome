@@ -106,9 +106,11 @@ const Command = () => {
           <View
             style={{
               flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-              rowGap: 10
+              flexWrap: 'wrap', 
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              columnGap: 30,
+              rowGap: 20,
             }}
           >
             {actuators.map((item) => (
