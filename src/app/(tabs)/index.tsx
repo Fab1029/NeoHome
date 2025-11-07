@@ -1,4 +1,5 @@
 import BackGround from "@/src/components/BackGround";
+import BluetoothButton from "@/src/components/BluetoothButton";
 import CommandAction from "@/src/components/CommandAction";
 import LoadingSkeleton from "@/src/components/LoadingSkeleton";
 import RecordButton from "@/src/components/RecordButton";
@@ -8,6 +9,7 @@ import { Action } from "@/src/models/Action";
 import { recordingTexts } from "@/src/utils/generals";
 import { useState } from "react";
 import { Text } from "react-native";
+import { View } from "react-native-reanimated/lib/typescript/Animated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -24,7 +26,8 @@ export default function Index() {
         backgroundColor: colors.background.primary
       }}
     >
-
+     <BluetoothButton />
+      
      <Text
         style={{
             width: '90%',
