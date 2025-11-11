@@ -27,6 +27,41 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
     onPress(); //cambia el estado del actuator en el useState de command.tsx
   }
 
+  const handleSliderComplete = (value: number) => {
+    const roundedValue = Math.round(value);
+    
+    let sliderCommand = '';
+
+    if (angleValue) {
+      const angle = Math.round((roundedValue / 100) * 180); 
+      
+      const prefix = angleValue.charAt(0);
+      
+      sliderCommand = `${prefix}${angle}#`;
+      
+      console.log(`Enviando Ángulo para ${name}: ${sliderCommand} (Valor Slider: ${roundedValue})`);
+      
+    } else if (intensity) {
+      const prefixMatch = intensity.match(/([a-zA-Z]+)/);
+      const prefix = prefixMatch ? prefixMatch[1] : '';
+      
+      let finalValue = roundedValue; 
+
+      if (id === 'led') {
+        finalValue = Math.round((roundedValue / 100) * 255);
+        sliderCommand = `${prefix}${finalValue}#`; 
+      } else {
+        sliderCommand = `${prefix}#${finalValue}`; 
+      }
+
+      console.log(`Enviando Intensidad para ${name}: ${sliderCommand} (Valor Slider: ${roundedValue})`);
+    }
+
+    if (sliderCommand) {
+        sendData(sliderCommand);
+    }
+  };
+
   const isOn = state.toLocaleLowerCase() === 'on';
 
   return (
@@ -101,6 +136,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
           thumbTintColor={colors.text.primary}
           value={sliderValue}
           onValueChange={setSliderValue}
+          onSlidingComplete={handleSliderComplete}
         />
         <Text style={{color: colors.background.primary}}>
           {sliderValue}%
