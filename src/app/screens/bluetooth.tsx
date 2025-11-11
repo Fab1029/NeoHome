@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useBLEContext } from "@/src/context/BLEContext";
 import { router } from "expo-router";
-import useBLE from "../../hooks/UseBle"; 
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Device } from "react-native-ble-plx";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const BluetoothScreen = () => {
   const {
@@ -12,7 +12,8 @@ const BluetoothScreen = () => {
     allDevices,
     connectToDevice,
     connectedDevice,
-  } = useBLE();
+    sendData
+  } = useBLEContext();
 
   const [isScanning, setIsScanning] = useState(false);
 

@@ -4,6 +4,7 @@ import { Animated, Image, TouchableWithoutFeedback, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { colors } from "../constants/colors";
 import icons from "../constants/icons";
+import { useBLEContext } from "../context/BLEContext";
 import { actuators } from "../data/Actuators";
 import APIClassifier from "../features/classifier/APIClassifier";
 import Classifier from "../features/classifier/Classifier";
@@ -26,6 +27,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
   const converter: Converter = new Converter(new APISpeechToText());
   const classifier: Classifier = new Classifier(new APIClassifier());
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const { sendData } = useBLEContext();
 
   // Animaciones
   const outerScale = useRef(new Animated.Value(1)).current;
@@ -119,10 +121,11 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
           setTextRecording(recordingTexts[2]);
 
           const command = await converter.convert(audioUri);
-         
+          
           if (command) {
             const commandResponse = await classifier.clasify(command);
             if (commandResponse) {
+              console.log(commandResponse)
               setTextRecording(recordingTexts[3]);
 
               const action = actuators.find(
@@ -134,6 +137,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
                 name: action?.name,
                 state: action?.commandOn === commandResponse ? "on" : "off",
               });
+              sendData(commandResponse);
             }
             else{
               setTextRecording(recordingTexts[0]);

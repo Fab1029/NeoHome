@@ -5,7 +5,7 @@ import { Actuator } from "../models/Actuator";
 export const actuators: Actuator[] = [
   {
     id: 'hallLight',  //PIN 12
-    name: 'Foco Sala',
+    name: 'Foco Exterior',
     icon: icons.lightBulbIcon,
     commandOn: 'a',
     commandOff: 'b',
@@ -13,7 +13,7 @@ export const actuators: Actuator[] = [
   },
   {
     id: 'beedromLight',  //pin 5
-    name: 'Foco Dormitorio',
+    name: 'Foco Interior',
     icon: icons.lightBulbIcon,
     commandOn: 'p',
     commandOff: 'q',

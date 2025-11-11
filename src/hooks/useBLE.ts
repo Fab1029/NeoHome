@@ -1,14 +1,12 @@
 /* eslint-disable no-bitwise */
+import * as ExpoDevice from "expo-device";
 import { useMemo, useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
-import {
-  BleError,
-  BleManager,
-  Characteristic,
-  Device,
-} from "react-native-ble-plx";
-import * as ExpoDevice from "expo-device";
 import base64 from "react-native-base64";
+import {
+  BleManager,
+  Device
+} from "react-native-ble-plx";
 
 interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
@@ -100,7 +98,7 @@ function useBLE(): BluetoothLowEnergyApi {
 
       if (device?.name) {
         // Puedes filtrar por nombre si tu módulo tiene uno específico
-        if (device.name.includes("HC-") || device.name.includes("HM-") || device.name.includes("Arduino")) {
+        if (device.name.includes("HC") || device.name.includes("HM") || device.name.includes("Arduino")) {
           setAllDevices((prevDevices) => {
             if (!isDuplicateDevice(prevDevices, device)) {
               return [...prevDevices, device];
@@ -113,34 +111,55 @@ function useBLE(): BluetoothLowEnergyApi {
   };
 
   // 🔹 Conectar al dispositivo
-  const connectToDevice = async (device: Device) => {
-    try {
-      const connection = await bleManager.connectToDevice(device.id);
-      await connection.discoverAllServicesAndCharacteristics();
-      bleManager.stopDeviceScan();
-      setConnectedDevice(connection);
-      console.log("✅ Conectado a", device.name);
+ const connectToDevice = async (device: Device) => {
+  try {
+    console.log("🔗 Conectando a:", device.name);
+    const connection = await bleManager.connectToDevice(device.id);
+    await connection.discoverAllServicesAndCharacteristics();
 
-      // Escuchar datos entrantes
-      connection.monitorCharacteristicForService(
-        SERVICE_UUID,
-        CHARACTERISTIC_UUID,
-        (error, characteristic) => {
-          if (error) {
-            console.log("❌ Error al recibir datos:", error);
-            return;
-          }
-          if (characteristic?.value) {
-            const decoded = base64.decode(characteristic.value);
-            console.log("📩 Recibido:", decoded);
-            setReceivedData(decoded);
-          }
+    // 🔹 Pequeño delay para garantizar que BLE responda
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    bleManager.stopDeviceScan();
+    setConnectedDevice(connection);
+
+    console.log("✅ Conectado a", device.name);
+
+    // 🔍 Intenta listar los servicios descubiertos
+    const services = await connection.services();
+    console.log("📡 Servicios encontrados:", services);
+
+    // Escuchar datos entrantes
+    connection.monitorCharacteristicForService(
+      SERVICE_UUID,
+      CHARACTERISTIC_UUID,
+      (error, characteristic) => {
+        if (error) {
+          console.log("❌ Error al recibir datos:", error);
+          return;
         }
-      );
-    } catch (e) {
-      console.log("❌ Error al conectar:", e);
-    }
-  };
+        if (characteristic?.value) {
+          const decoded = base64.decode(characteristic.value);
+          console.log("📩 Recibido:", decoded);
+          setReceivedData(decoded);
+        }
+      }
+    );
+
+    // ✅ Envía el primer dato para probar la conexión
+    const encoded = base64.encode("a");
+    await connection.writeCharacteristicWithoutResponseForService(
+      SERVICE_UUID,
+      CHARACTERISTIC_UUID,
+      encoded
+    );
+    console.log("📤 Enviado: a");
+
+  } catch (e) {
+    console.log("❌ Error al conectar:", e);
+  }
+};
+
 
   // 🔹 Enviar datos al módulo
   const sendData = async (data: string) => {
@@ -151,6 +170,7 @@ function useBLE(): BluetoothLowEnergyApi {
 
     try {
       const encoded = base64.encode(data);
+      console.log(encoded)
       await connectedDevice.writeCharacteristicWithoutResponseForService(
         SERVICE_UUID,
         CHARACTERISTIC_UUID,

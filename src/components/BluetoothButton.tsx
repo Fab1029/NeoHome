@@ -1,10 +1,10 @@
-import { Pressable, Text } from "react-native";
-import React from "react";
 import { router } from "expo-router";
-import useBLE from "../hooks/UseBle";
+import React from "react";
+import { Pressable, Text } from "react-native";
+import { useBLEContext } from "../context/BLEContext";
 
 const BluetoothButton = () => {
-  const { connectedDevice, disconnectFromDevice } = useBLE();
+  const { connectedDevice, disconnectFromDevice } = useBLEContext();
 
   const handlePress = () => {
     if (connectedDevice) {

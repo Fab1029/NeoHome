@@ -38,6 +38,7 @@ class APIClassifier implements MethodClassifier {
       return response.text as string;
 
     } catch (error) {
+      console.log(error);
       return '';
     }
   }

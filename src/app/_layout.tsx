@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
+import { BLEProvider } from '../context/BLEContext';
 import { PermissionProvider } from '../context/PermissionProvider';
 
 export default function RootLayout() {
@@ -27,22 +28,24 @@ export default function RootLayout() {
 
   if (fontsLoaded) {
     return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <PermissionProvider>
-          <StatusBar style='dark'/>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              name="(tabs)"
-              options={{ headerShown: false}}
-            />
-          </Stack>
-          <Toast /*config={toastConfig}*//>
-        </PermissionProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BLEProvider>
+          <PermissionProvider>
+            <StatusBar style='dark' />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="(tabs)"
+                options={{ headerShown: false }}
+              />
+            </Stack>
+            <Toast /*config={toastConfig}*/ />
+          </PermissionProvider>
+        </BLEProvider>
       </GestureHandlerRootView>
-      
-      
-      
+
+
+
     )
   };
-  
+
 }

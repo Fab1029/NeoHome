@@ -1,8 +1,9 @@
+import Slider from '@react-native-community/slider'
 import React, { useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
-import Slider from '@react-native-community/slider'
 import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
+import { useBLEContext } from '../context/BLEContext'
 import { Actuator } from '../models/Actuator'
 
 type Props = Actuator & {
@@ -12,14 +13,16 @@ type Props = Actuator & {
 const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue, intensity, onPress}: Props) => {
   const [sliderValue, setSliderValue] = useState(50);
   const hasSlider = !!angleValue || !!intensity;
+  const { sendData }  = useBLEContext();
 
   const handlePress = () => {
     if (state.toLocaleLowerCase() === 'on') {
       console.log(`Apagando ${name} con comando: ${commandOff}`);
+      sendData(commandOff);
       //lamar al servicio que conecta con el bluetooh o devuelve al padre y el padre llaama a la funcion con bluetoh
     } else {
       console.log(`Prendiendo ${name} con comando: ${commandOn}`);
-      //lamar al servicio que conecta con el bluetooh
+      sendData(commandOn);
     }
     onPress(); //cambia el estado del actuator en el useState de command.tsx
   }
