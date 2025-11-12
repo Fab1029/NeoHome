@@ -1,4 +1,5 @@
 import { RecordingPresets, setAudioModeAsync, useAudioRecorder } from "expo-audio";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Animated, Image, TouchableWithoutFeedback, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -26,7 +27,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
   const converter: Converter = new Converter(new APISpeechToText());
   const classifier: Classifier = new Classifier(new APIClassifier());
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const { sendData } = useBLEContext();
+  const { connectedDevice, sendData } = useBLEContext();
 
   // Animaciones
   const outerScale = useRef(new Animated.Value(1)).current;
@@ -69,6 +70,20 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
   /** ============ GRABACIÓN ============ **/
   const startRecording = async () => {
     try {
+      if (!connectedDevice) {
+        Toast.show({
+          type: 'error',
+          text1: 'Conectar bluetooth',
+          text2: 'Toca esta alerta para conectarte',
+          onPress: () => {
+            Toast.hide();
+            router.push('/screens/bluetooth');
+          },
+          visibilityTime: 3000
+        });
+        return;
+      }
+
       if (!micPermission) return;
 
       const granted = await micPermission.isGranted();
@@ -98,6 +113,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         type: 'error',
         text1: 'Error al iniciar grabación',
         text2: 'Verifica permisos o inténtalo nuevamente.',
+        visibilityTime: 3000
       });
     }
   };
@@ -143,6 +159,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
                 type: 'error',
                 text1: 'Error de acción',
                 text2: 'Acción no deinida en el aplicativo',
+                visibilityTime: 3000
               });
             }
           }
@@ -152,6 +169,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
               type: 'error',
               text1: 'Error al convertir el audio',
               text2: 'Se produjo un error al convertir el audio, inténtalo nuevamente',
+              visibilityTime: 3000
             });
           }
         }
@@ -161,6 +179,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         type: 'error',
         text1: 'Error en grabación',
         text2: 'Se produjo un error la grabar el audio, inténatalo nuevamente',
+        visibilityTime: 3000
       });
     } finally {
       stopPulse();

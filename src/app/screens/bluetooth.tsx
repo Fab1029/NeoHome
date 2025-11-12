@@ -1,3 +1,5 @@
+import { colors } from "@/src/constants/colors";
+import fonts from "@/src/constants/fonts";
 import { useBLEContext } from "@/src/context/BLEContext";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -41,7 +43,7 @@ const BluetoothScreen = () => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Dispositivos Bluetooth Disponibles</Text>
 
-      {isScanning && <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />}
+      {isScanning && <ActivityIndicator size="large" color={colors.text.primary} style={{ marginTop: 20 }} />}
 
       <FlatList
         data={allDevices}
@@ -68,7 +70,7 @@ const BluetoothScreen = () => {
       />
 
       <TouchableOpacity style={styles.scanButton} onPress={handleScan}>
-        <Text style={styles.scanText}>🔄 Escanear Nuevamente</Text>
+        <Text style={styles.scanText}>Escanear Nuevamente</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -79,14 +81,15 @@ export default BluetoothScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: colors.background.primary,
     padding: 20,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: fonts.sizes.xlarge,
+    fontFamily: 'Bold',
     textAlign: "center",
     marginVertical: 10,
+    color: colors.text.primary,
   },
   deviceCard: {
     backgroundColor: "#fff",
@@ -96,24 +99,24 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   deviceName: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#333",
+    fontSize: fonts.sizes.medium,
+    fontFamily: 'Medium',
+    color: colors.text.secondary,
   },
   deviceStatus: {
     marginTop: 4,
-    fontSize: 14,
+    fontSize: fonts.sizes.small,
     color: "#666",
   },
   scanButton: {
     marginTop: 20,
-    backgroundColor: "#007AFF",
+    backgroundColor: colors.text.primary,
     padding: 15,
     borderRadius: 10,
   },
   scanText: {
-    color: "#fff",
+    color: colors.text.tertiary,
     textAlign: "center",
-    fontWeight: "bold",
+    fontFamily: 'Bold',
   },
 });

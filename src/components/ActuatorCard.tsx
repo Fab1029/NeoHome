@@ -24,6 +24,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
         text1: 'Conectar bluetooth',
         text2: 'Toca esta alerta para conectarte',
         onPress: () => {
+          Toast.hide();
           router.push('/screens/bluetooth');
         },
         visibilityTime: 3000

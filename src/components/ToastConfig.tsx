@@ -9,8 +9,8 @@ export const toastConfig = {
       {...props}
       style={{
         padding:5,
-        borderLeftColor: colors.primary,
-        backgroundColor: colors.secondary,
+        borderLeftColor: colors.success,
+        backgroundColor: colors.success,
         borderRadius: 14,
         borderWidth: 0,
         shadowColor: '#000',
@@ -21,12 +21,12 @@ export const toastConfig = {
       text1Style={{
         fontSize: fonts.sizes.large,
         fontFamily: 'Bold',
-        color: colors.text.primary,
+        color: colors.text.tertiary,
       }}
       text2Style={{
         fontSize: fonts.sizes.medium,
         fontFamily: fonts.fonts.Regular,
-        color: colors.text.secondary,
+        color: colors.text.tertiary,
       }}
     />
   ),
@@ -65,8 +65,8 @@ export const toastConfig = {
       {...props}
       style={{
         padding:5,
-        borderLeftColor: colors.success,
-        backgroundColor: colors.success,
+        borderLeftColor: colors.text.primary,
+        backgroundColor: colors.text.primary,
         borderRadius: 14,
         borderWidth: 0,
         shadowColor: '#000',
@@ -77,12 +77,12 @@ export const toastConfig = {
       text1Style={{
         fontSize: fonts.sizes.large,
         fontFamily: 'Bold',
-        color: colors.text.primary,
+        color: colors.text.tertiary,
       }}
       text2Style={{
         fontSize: fonts.sizes.medium,
         fontFamily: fonts.fonts.Regular,
-        color: colors.text.secondary,
+        color: colors.text.tertiary,
       }}
     />
   ),
