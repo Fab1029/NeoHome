@@ -6,6 +6,7 @@ import SensorCard from '@/src/components/SensorCard'
 import { colors } from '@/src/constants/colors'
 import fonts from '@/src/constants/fonts'
 import icons from '@/src/constants/icons'
+import { useActuatorState } from '@/src/context/ActionContext'
 import { actuators as initialActuators } from '@/src/data/Actuators'
 import { sensors } from '@/src/data/Sensors'
 import { filters } from '@/src/utils/generals'
@@ -15,6 +16,7 @@ import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Command = () => {
+  const { getActuator } = useActuatorState();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [selectedFilter, setSelectedFilter] = useState(filters);
   const [actuators, setActuators] = useState(initialActuators);
@@ -85,7 +87,17 @@ const Command = () => {
             }}
           >
             {actuators.map((item) => (
-              <ActuatorCard key={item.id} {...item} onPress={() => toggleActuator(item.id)}/>
+              <ActuatorCard key={item.id} onPress={() => toggleActuator(item.id)}
+                id={item.id}
+                name={item.name}
+                icon={item.icon}
+                commandOn={item.commandOn}
+                commandOff={item.commandOff}
+                angleValue={item.angleValue}
+                commandMove={item.commandMove}
+                intensity={getActuator(item.id)?.intensity}
+                state={getActuator(item.id)?.state ?? 'Off'}
+              />
             ))}
           </View>
           </>

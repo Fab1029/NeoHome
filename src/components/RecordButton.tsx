@@ -5,6 +5,7 @@ import { Animated, Image, TouchableWithoutFeedback, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { colors } from "../constants/colors";
 import icons from "../constants/icons";
+import { useActuatorState } from "../context/ActionContext";
 import { useBLEContext } from "../context/BLEContext";
 import { actuators } from "../data/Actuators";
 import APIClassifier from "../features/classifier/APIClassifier";
@@ -23,11 +24,13 @@ interface RecordButtonProps {
 const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: RecordButtonProps) => {
   const permissions = usePermission();
   const micPermission = permissions?.microphone;
+  const { setActuatorState } = useActuatorState();
+  const { connectedDevice, sendData } = useBLEContext();
   const [isDisableButton, setIsDisableButton] = useState(false);
   const converter: Converter = new Converter(new APISpeechToText());
   const classifier: Classifier = new Classifier(new APIClassifier());
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const { connectedDevice, sendData } = useBLEContext();
+  
 
   // Animaciones
   const outerScale = useRef(new Animated.Value(1)).current;
@@ -152,6 +155,10 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
                 state: action?.commandOn === commandResponse ? "on" : "off",
               });
               sendData(commandResponse);
+              
+              /*Cambiar estado de action*/
+              if (action?.id)
+                setActuatorState(action.id, action?.commandOn === commandResponse ? "On" : "Off")
             }
             else{
               setTextRecording(recordingTexts[0]);

@@ -5,6 +5,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
+import { useActuatorState } from '../context/ActionContext'
 import { useBLEContext } from '../context/BLEContext'
 import { Actuator } from '../models/Actuator'
 
@@ -13,9 +14,10 @@ type Props = Actuator & {
 };
 
 const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue, intensity, onPress}: Props) => {
-  const hasSlider = !!angleValue || !!intensity;
   const [sliderValue, setSliderValue] = useState(50);
   const { connectedDevice, sendData }  = useBLEContext();
+  const hasSlider = (intensity || angleValue) ? true : false;
+  const { toggleActuatorState, setActuatorIntensity } = useActuatorState();
 
   const handlePress = () => {
     if(!connectedDevice){
@@ -40,6 +42,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
       sendData(commandOn);
     }
     onPress(); //cambia el estado del actuator en el useState de command.tsx
+    toggleActuatorState(id);
   }
 
   const handleSliderComplete = (value: number) => {
@@ -54,6 +57,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
       
       sliderCommand = `${prefix}${angle}#`;
       
+      setActuatorIntensity(id, sliderCommand);
       console.log(`Enviando Ángulo para ${name}: ${sliderCommand} (Valor Slider: ${roundedValue})`);
       
     } else if (intensity) {
@@ -62,18 +66,14 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
       
       let finalValue = roundedValue; 
 
-      if (id === 'led') {
-        finalValue = Math.round((roundedValue / 100) * 255);
-        sliderCommand = `${prefix}${finalValue}#`; 
-      } else {
-        sliderCommand = `${prefix}#${finalValue}`; 
-      }
+      finalValue = Math.round((roundedValue / 100) * 255);
+      sliderCommand = `${prefix}${finalValue}#`; 
 
       console.log(`Enviando Intensidad para ${name}: ${sliderCommand} (Valor Slider: ${roundedValue})`);
     }
 
     if (sliderCommand) {
-        sendData(sliderCommand);
+      sendData(sliderCommand);
     }
   };
 
