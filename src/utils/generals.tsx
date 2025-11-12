@@ -6,6 +6,6 @@ export const recordingTexts = [
 ]
 
 export const filters = [
-  {filter: "sensors", value: true},
-  {filter: "actuators", value: false},
+  {filter: "actuators", value: true},
+  {filter: "sensors", value: false}
 ]

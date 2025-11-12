@@ -21,7 +21,6 @@ interface RecordButtonProps {
 
 const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: RecordButtonProps) => {
   const permissions = usePermission();
-  const [helpText, setHelpText] = useState('');
   const micPermission = permissions?.microphone;
   const [isDisableButton, setIsDisableButton] = useState(false);
   const converter: Converter = new Converter(new APISpeechToText());
@@ -125,13 +124,12 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
           if (command) {
             const commandResponse = await classifier.clasify(command);
             if (commandResponse) {
-              console.log(commandResponse)
               setTextRecording(recordingTexts[3]);
 
               const action = actuators.find(
                 (a) => commandResponse === a.commandOn || commandResponse === a.commandOff
               );
-
+               /* Esta accion se muestra como una card al momento de realizarse */
               setAction({
                 icon: action?.icon,
                 name: action?.name,

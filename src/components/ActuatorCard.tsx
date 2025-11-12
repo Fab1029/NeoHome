@@ -1,6 +1,8 @@
 import Slider from '@react-native-community/slider'
+import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
 import { useBLEContext } from '../context/BLEContext'
@@ -11,11 +13,23 @@ type Props = Actuator & {
 };
 
 const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue, intensity, onPress}: Props) => {
-  const [sliderValue, setSliderValue] = useState(50);
   const hasSlider = !!angleValue || !!intensity;
-  const { sendData }  = useBLEContext();
+  const [sliderValue, setSliderValue] = useState(50);
+  const { connectedDevice, sendData }  = useBLEContext();
 
   const handlePress = () => {
+    if(!connectedDevice){
+      Toast.show({
+        type: 'error',
+        text1: 'Conectar bluetooth',
+        text2: 'Toca esta alerta para conectarte',
+        onPress: () => {
+          router.push('/screens/bluetooth');
+        },
+        visibilityTime: 3000
+      });
+      return;
+    }
     if (state.toLocaleLowerCase() === 'on') {
       console.log(`Apagando ${name} con comando: ${commandOff}`);
       sendData(commandOff);

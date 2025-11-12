@@ -87,12 +87,12 @@ const Filter = ({ selectedFilter, setSelectedFilter, bottomSheetRef }: FilterPro
           }}
         >
           <CustomSwitch
-            name='Sensores'
+            name='Actuadores'
             filter={selectedFilter[0]}
             onChange={handleSelectFilters}
           />
           <CustomSwitch
-            name='Actuadores'
+            name='Sensores'
             filter={selectedFilter[1]}
             onChange={handleSelectFilters}
           />
