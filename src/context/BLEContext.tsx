@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { PermissionsAndroid, Platform } from "react-native";
 import base64 from "react-native-base64";
 import { BleManager, Device } from "react-native-ble-plx";
+import Toast from "react-native-toast-message";
 
 interface BLEContextType {
   requestPermissions: () => Promise<boolean>;
@@ -73,6 +74,15 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     bleManager.startDeviceScan(null, null, (error, device) => {
       if (error) {
         console.log("❌ Error escaneo:", error);
+        if (error.errorCode === 102) {
+          Toast.show({
+            type: 'info',
+            text1: 'Bluetooth ',
+            text2: 'El bluetooth esta desconecto',
+            visibilityTime: 3000
+          });
+        }
+        
         return;
       }
       if (device?.name && (device.name.includes("HM") || device.name.includes("HC"))) {

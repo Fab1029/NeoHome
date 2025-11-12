@@ -3,14 +3,14 @@ import fonts from '@/src/constants/fonts';
 import { BaseToast, ErrorToast } from 'react-native-toast-message';
 
 export const toastConfig = {
-  // ✅ Toast de ÉXITO
+
   success: (props:any) => (
     <BaseToast
       {...props}
       style={{
         padding:5,
-        borderLeftColor: colors.primary,
-        backgroundColor: colors.secondary + '20',
+        borderLeftColor: colors.success,
+        backgroundColor: colors.success,
         borderRadius: 14,
         borderWidth: 0,
         shadowColor: '#000',
@@ -21,52 +21,52 @@ export const toastConfig = {
       text1Style={{
         fontSize: fonts.sizes.large,
         fontFamily: 'Bold',
-        color: colors.text.primary,
+        color: colors.text.tertiary,
       }}
       text2Style={{
         fontSize: fonts.sizes.medium,
         fontFamily: fonts.fonts.Regular,
-        color: colors.text.secondary,
+        color: colors.text.tertiary,
       }}
     />
   ),
 
-  // ⚠️ Toast de ERROR
+
   error: (props:any) => (
     <ErrorToast
       {...props}
       style={{
         padding:5,
         borderLeftColor: colors.error,
-        backgroundColor: colors.error + '20',
+        backgroundColor: colors.error,
         borderRadius: 14,
         borderWidth: 0,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 8,
       }}
-      contentContainerStyle={{ paddingHorizontal: 12 }}
+      contentContainerStyle={{ paddingHorizontal: 12}}
       text1Style={{
         fontSize: fonts.sizes.large,
         fontFamily: 'Bold',
-        color: colors.text.primary,
+        color: colors.text.tertiary,
       }}
       text2Style={{
         fontSize: fonts.sizes.medium,
         fontFamily: fonts.fonts.Regular,
-        color: colors.text.secondary,
+        color: colors.text.tertiary,
       }}
     />
   ),
 
-  // ℹ️ Toast de INFORMACIÓN
+
   info: (props:any) => (
     <BaseToast
       {...props}
       style={{
         padding:5,
-        borderLeftColor: colors.success,
-        backgroundColor: colors.success + '20',
+        borderLeftColor: colors.text.primary,
+        backgroundColor: colors.text.primary,
         borderRadius: 14,
         borderWidth: 0,
         shadowColor: '#000',
@@ -77,12 +77,12 @@ export const toastConfig = {
       text1Style={{
         fontSize: fonts.sizes.large,
         fontFamily: 'Bold',
-        color: colors.text.primary,
+        color: colors.text.tertiary,
       }}
       text2Style={{
         fontSize: fonts.sizes.medium,
         fontFamily: fonts.fonts.Regular,
-        color: colors.text.secondary,
+        color: colors.text.tertiary,
       }}
     />
   ),

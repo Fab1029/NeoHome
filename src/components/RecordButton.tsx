@@ -1,4 +1,5 @@
 import { RecordingPresets, setAudioModeAsync, useAudioRecorder } from "expo-audio";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Animated, Image, TouchableWithoutFeedback, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -21,13 +22,12 @@ interface RecordButtonProps {
 
 const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: RecordButtonProps) => {
   const permissions = usePermission();
-  const [helpText, setHelpText] = useState('');
   const micPermission = permissions?.microphone;
   const [isDisableButton, setIsDisableButton] = useState(false);
   const converter: Converter = new Converter(new APISpeechToText());
   const classifier: Classifier = new Classifier(new APIClassifier());
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const { sendData } = useBLEContext();
+  const { connectedDevice, sendData } = useBLEContext();
 
   // Animaciones
   const outerScale = useRef(new Animated.Value(1)).current;
@@ -70,6 +70,20 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
   /** ============ GRABACIÓN ============ **/
   const startRecording = async () => {
     try {
+      if (!connectedDevice) {
+        Toast.show({
+          type: 'error',
+          text1: 'Conectar bluetooth',
+          text2: 'Toca esta alerta para conectarte',
+          onPress: () => {
+            Toast.hide();
+            router.push('/screens/bluetooth');
+          },
+          visibilityTime: 3000
+        });
+        return;
+      }
+
       if (!micPermission) return;
 
       const granted = await micPermission.isGranted();
@@ -99,6 +113,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         type: 'error',
         text1: 'Error al iniciar grabación',
         text2: 'Verifica permisos o inténtalo nuevamente.',
+        visibilityTime: 3000
       });
     }
   };
@@ -125,13 +140,12 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
           if (command) {
             const commandResponse = await classifier.clasify(command);
             if (commandResponse) {
-              console.log(commandResponse)
               setTextRecording(recordingTexts[3]);
 
               const action = actuators.find(
                 (a) => commandResponse === a.commandOn || commandResponse === a.commandOff
               );
-
+               /* Esta accion se muestra como una card al momento de realizarse */
               setAction({
                 icon: action?.icon,
                 name: action?.name,
@@ -145,6 +159,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
                 type: 'error',
                 text1: 'Error de acción',
                 text2: 'Acción no deinida en el aplicativo',
+                visibilityTime: 3000
               });
             }
           }
@@ -154,6 +169,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
               type: 'error',
               text1: 'Error al convertir el audio',
               text2: 'Se produjo un error al convertir el audio, inténtalo nuevamente',
+              visibilityTime: 3000
             });
           }
         }
@@ -163,6 +179,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         type: 'error',
         text1: 'Error en grabación',
         text2: 'Se produjo un error la grabar el audio, inténatalo nuevamente',
+        visibilityTime: 3000
       });
     } finally {
       stopPulse();

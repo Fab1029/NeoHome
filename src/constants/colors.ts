@@ -17,8 +17,8 @@ export const colors = {
     tertiary: "#FFFFFF",
   },
   warning: "#FBBF24",
-  error: "#F87171",
-  success: "#22D3EE",
+  error: "#EF4444",
+  success: "#6366F1",
   surface: {
     primary: "#FFFFFF80", // 50% opacity
     secondary: "#E5E7EB80", // 50% opacity

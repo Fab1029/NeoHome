@@ -68,35 +68,6 @@ const Command = () => {
                 fontFamily: 'Bold',
                 fontSize: fonts.sizes.xlarge,
                 color: colors.text.primary,
-                marginBottom: 10
-              }}
-            >
-              Sensores
-            </Text>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                rowGap: 10
-              }}
-            >
-              {sensors.map((item) => (
-                <SensorCard key={item.id} {...item} />
-              ))}
-            </View>
-          </>
-          
-        )}
-        
-        {selectedFilter.find((f) => f.filter === filters[1].filter)?.value && (
-          <>
-            <Text
-              style={{
-                fontFamily: 'Bold',
-                fontSize: fonts.sizes.xlarge,
-                color: colors.text.primary,
                 marginVertical: 15
               }}
             >
@@ -117,6 +88,34 @@ const Command = () => {
               <ActuatorCard key={item.id} {...item} onPress={() => toggleActuator(item.id)}/>
             ))}
           </View>
+          </>
+        )}
+        
+        {selectedFilter.find((f) => f.filter === filters[1].filter)?.value && (
+          <>
+            <Text
+              style={{
+                fontFamily: 'Bold',
+                fontSize: fonts.sizes.xlarge,
+                color: colors.text.primary,
+                marginBottom: 10
+              }}
+            >
+              Sensores
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                rowGap: 10
+              }}
+            >
+              {sensors.map((item) => (
+                <SensorCard key={item.id} {...item} />
+              ))}
+            </View>
           </>
           
         )}
