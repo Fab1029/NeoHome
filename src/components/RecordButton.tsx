@@ -1,17 +1,12 @@
+import { healthCheck, uploadAudio } from "@/services/backend";
 import { RecordingPresets, setAudioModeAsync, useAudioRecorder } from "expo-audio";
-import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Animated, Image, TouchableWithoutFeedback, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { colors } from "../constants/colors";
 import icons from "../constants/icons";
 import { useActuatorState } from "../context/ActionContext";
-import { useBLEContext } from "../context/BLEContext";
 import { actuators } from "../data/Actuators";
-import APIClassifier from "../features/classifier/APIClassifier";
-import Classifier from "../features/classifier/Classifier";
-import APISpeechToText from "../features/convert/APISpeechToText";
-import Converter from "../features/convert/Converter";
 import { usePermission } from "../hooks/UsePermission";
 import { recordingTexts } from "../utils/generals";
 
@@ -25,10 +20,8 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
   const permissions = usePermission();
   const micPermission = permissions?.microphone;
   const { setActuatorState } = useActuatorState();
-  const { connectedDevice, sendData } = useBLEContext();
+
   const [isDisableButton, setIsDisableButton] = useState(false);
-  const converter: Converter = new Converter(new APISpeechToText());
-  const classifier: Classifier = new Classifier(new APIClassifier());
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   
 
@@ -73,21 +66,8 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
   /** ============ GRABACIÓN ============ **/
   const startRecording = async () => {
     try {
-      if (!connectedDevice) {
-        Toast.show({
-          type: 'error',
-          text1: 'Conectar bluetooth',
-          text2: 'Toca esta alerta para conectarte',
-          onPress: () => {
-            Toast.hide();
-            router.push('/screens/bluetooth');
-          },
-          visibilityTime: 3000
-        });
-        return;
-      }
-
-      if (!micPermission) return;
+      if (!micPermission) 
+        throw new Error('Sin permisos de microfono');
 
       const granted = await micPermission.isGranted();
       if (!granted) {
@@ -111,11 +91,11 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         stopRecording();
       }, 8000);
 
-    } catch (err) {
+    } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error al iniciar grabación',
-        text2: 'Verifica permisos o inténtalo nuevamente.',
+        text1: `${error}`,
+        text2: 'Intentalo nuevamente',
         visibilityTime: 3000
       });
     }
@@ -123,6 +103,7 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
 
   const stopRecording = async () => {
     try {
+      
       if (recordingTimeoutRef.current) {
         clearTimeout(recordingTimeoutRef.current);
         recordingTimeoutRef.current = null;
@@ -134,58 +115,40 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         setIsDisableButton(true);
 
         const audioUri = audioRecorder.uri;
-        if (audioUri) {
-          setProcessingAudio(true);
-          setTextRecording(recordingTexts[2]);
+        
+        if(!audioUri)
+          throw new Error('Audio file error');
 
-          const command = await converter.convert(audioUri);
-          
-          if (command) {
-            const commandResponse = await classifier.clasify(command);
-            if (commandResponse) {
-              setTextRecording(recordingTexts[3]);
+        setProcessingAudio(true);
+        setTextRecording(recordingTexts[2]);
+        
+        await healthCheck();
+        const command =  await uploadAudio(audioUri);
 
-              const action = actuators.find(
-                (a) => commandResponse === a.commandOn || commandResponse === a.commandOff
-              );
-               /* Esta accion se muestra como una card al momento de realizarse */
-              setAction({
-                icon: action?.icon,
-                name: action?.name,
-                state: action?.commandOn === commandResponse ? "on" : "off",
-              });
-              sendData(commandResponse);
-              
-              /*Cambiar estado de action*/
-              if (action?.id)
-                setActuatorState(action.id, action?.commandOn === commandResponse ? "On" : "Off")
-            }
-            else{
-              setTextRecording(recordingTexts[0]);
-              Toast.show({
-                type: 'error',
-                text1: 'Error de acción',
-                text2: 'Acción no deinida en el aplicativo',
-                visibilityTime: 3000
-              });
-            }
-          }
-          else{    
-            setTextRecording(recordingTexts[0]);
-            Toast.show({
-              type: 'error',
-              text1: 'Error al convertir el audio',
-              text2: 'Se produjo un error al convertir el audio, inténtalo nuevamente',
-              visibilityTime: 3000
-            });
-          }
+        setTextRecording(recordingTexts[3]);
+
+        const action = actuators.find(
+          (a) => command.command === a.commandOn || command.command === a.commandOff
+        );
+        
+        if(!action) {
+          throw new Error('Action not match');
         }
+        
+        setAction({
+          icon: action?.icon,
+          name: action?.name,
+          state: action?.commandOn === command.command ? "on" : "off",
+        });
+        
+        setActuatorState(action.id, action?.commandOn === command.command ? "On" : "Off");
       }
-    } catch (err) {
+    } catch (error) {
+      setTextRecording(recordingTexts[0]);
       Toast.show({
         type: 'error',
-        text1: 'Error en grabación',
-        text2: 'Se produjo un error la grabar el audio, inténatalo nuevamente',
+        text1: `${error}`,
+        text2: 'Se produjo un error',
         visibilityTime: 3000
       });
     } finally {

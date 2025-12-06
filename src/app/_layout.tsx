@@ -7,7 +7,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '../components/ToastConfig';
 import { ActuatorStateProvider } from '../context/ActionContext';
-import { BLEProvider } from '../context/BLEContext';
 import { PermissionProvider } from '../context/PermissionProvider';
 
 
@@ -28,8 +27,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BLEProvider>
-        <PermissionProvider>
+      <PermissionProvider>
           <ActuatorStateProvider> 
             <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false }}>
@@ -38,7 +36,6 @@ export default function RootLayout() {
             <Toast config={toastConfig} />
           </ActuatorStateProvider>
         </PermissionProvider>
-      </BLEProvider>
     </GestureHandlerRootView>
   );
 }

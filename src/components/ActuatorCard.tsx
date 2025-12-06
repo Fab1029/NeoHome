@@ -1,12 +1,11 @@
+import { healthCheck, sendAction } from "@/services/backend"
 import Slider from '@react-native-community/slider'
-import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
-import Toast from 'react-native-toast-message'
+import Toast from "react-native-toast-message"
 import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
 import { useActuatorState } from '../context/ActionContext'
-import { useBLEContext } from '../context/BLEContext'
 import { Actuator } from '../models/Actuator'
 
 type Props = Actuator & {
@@ -15,37 +14,33 @@ type Props = Actuator & {
 
 const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue, intensity, onPress}: Props) => {
   const [sliderValue, setSliderValue] = useState(50);
-  const { connectedDevice, sendData }  = useBLEContext();
+
   const hasSlider = (intensity || angleValue) ? true : false;
   const { toggleActuatorState, setActuatorIntensity } = useActuatorState();
 
-  const handlePress = () => {
-    if(!connectedDevice){
+  const handlePress = async () => {
+    try {
+      await healthCheck();
+ 
+      state.toLocaleLowerCase() === 'on' 
+        ? await sendAction(commandOff)
+        : await sendAction(commandOn);
+     
+      onPress(); 
+      toggleActuatorState(id);
+
+    }catch(error) {
       Toast.show({
         type: 'error',
-        text1: 'Conectar bluetooth',
-        text2: 'Toca esta alerta para conectarte',
-        onPress: () => {
-          Toast.hide();
-          router.push('/screens/bluetooth');
-        },
+        text1: `${error}`,
+        text2: 'Intente nuevamente',
         visibilityTime: 3000
       });
-      return;
     }
-    if (state.toLocaleLowerCase() === 'on') {
-      console.log(`Apagando ${name} con comando: ${commandOff}`);
-      sendData(commandOff);
-      //lamar al servicio que conecta con el bluetooh o devuelve al padre y el padre llaama a la funcion con bluetoh
-    } else {
-      console.log(`Prendiendo ${name} con comando: ${commandOn}`);
-      sendData(commandOn);
-    }
-    onPress(); //cambia el estado del actuator en el useState de command.tsx
-    toggleActuatorState(id);
+    
   }
 
-  const handleSliderComplete = (value: number) => {
+  const handleSliderComplete = async(value: number) => {
     const roundedValue = Math.round(value);
     
     let sliderCommand = '';
@@ -71,9 +66,18 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
 
       console.log(`Enviando Intensidad para ${name}: ${sliderCommand} (Valor Slider: ${roundedValue})`);
     }
-
     if (sliderCommand) {
-      sendData(sliderCommand);
+      try {
+        await healthCheck();
+        sendAction(sliderCommand);
+      }catch(error) {
+        Toast.show({
+          type: 'error',
+          text1: `${error}`,
+          text2: 'Intente nuevamente',
+          visibilityTime: 3000
+        });
+      }
     }
   };
 
