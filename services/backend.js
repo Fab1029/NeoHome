@@ -1,16 +1,18 @@
-const BASE_URL = "http://10.26.17.119:8000"
+const BASE_URL = "http://10.26.23.34:8000"
 
 export const healthCheck = async() => {
   try {
     const response = await fetch(`${BASE_URL}/health`);
+    
     const data = await response.json();
     
     if(data.status !== 'online')
       throw new Error("Server disconected");
-
-    if(data.bluetooth.state !== 'connected')
-      throw new Error("Server bluetooth disconected");
     
+    
+    if(data.system.bluetooth.state !== 'connected')
+      throw new Error("Server bluetooth disconected");
+
     return data;
 
   }catch(error) {
@@ -29,11 +31,11 @@ export const sendAction = async(command) => {
     });
 
     const data = await response.json(); 
-
-    if (response.status !== 'sent') {
+    
+    if (data.status !== 'sent') {
         throw new Error('Server cant not run action');
     }
-
+    console.log(data);
     return data;
 
   }catch(eror) {

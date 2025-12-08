@@ -21,15 +21,16 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
   const handlePress = async () => {
     try {
       await healthCheck();
- 
+  
       state.toLocaleLowerCase() === 'on' 
         ? await sendAction(commandOff)
         : await sendAction(commandOn);
-     
+    
       onPress(); 
       toggleActuatorState(id);
 
     }catch(error) {
+      console.log(error);
       Toast.show({
         type: 'error',
         text1: `${error}`,

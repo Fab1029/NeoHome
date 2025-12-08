@@ -124,7 +124,6 @@ const RecordButton = ({ setTextRecording, setAction, setProcessingAudio }: Recor
         
         await healthCheck();
         const command =  await uploadAudio(audioUri);
-
         setTextRecording(recordingTexts[3]);
 
         const action = actuators.find(
