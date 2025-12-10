@@ -6,15 +6,22 @@ import { colors } from "@/src/constants/colors";
 import fonts from "@/src/constants/fonts";
 import { Action } from "@/src/models/Action";
 import { recordingTexts } from "@/src/utils/generals";
-import { useState } from "react";
+import { useWebSocketStore } from "@/store/webSocketStore";
+import { useEffect, useState } from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function Index() {
   const [action, setAction] = useState<Action>();
+  const { connect, disconnect} = useWebSocketStore();
   const [processingAudio, setProcessingAudio] = useState(false);
   const [textRecording, setTextRecording] = useState(recordingTexts[0]);
+
+  useEffect(() => {
+    connect();
+    return () => disconnect();
+  }, []);
 
   return (
     <SafeAreaView

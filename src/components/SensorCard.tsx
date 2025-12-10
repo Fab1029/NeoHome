@@ -4,7 +4,7 @@ import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
 import { Sensor } from '../models/Sensors'
 
-const SensorCard = ({id, name, icon, command}: Sensor) => {
+const SensorCard = ({id, name, icon, data}: Sensor) => {
   return (
     <View
         style={{
@@ -23,7 +23,9 @@ const SensorCard = ({id, name, icon, command}: Sensor) => {
         >
             {name}
         </Text>
-        <Text>Info Sensor</Text>
+        <Text>
+            {data}
+        </Text>
         
         <View
             style={{

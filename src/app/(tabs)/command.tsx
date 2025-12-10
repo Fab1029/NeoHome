@@ -8,18 +8,48 @@ import fonts from '@/src/constants/fonts'
 import icons from '@/src/constants/icons'
 import { useActuatorState } from '@/src/context/ActionContext'
 import { actuators as initialActuators } from '@/src/data/Actuators'
-import { sensors } from '@/src/data/Sensors'
+import { sensors as initialSensors } from '@/src/data/Sensors'
 import { filters } from '@/src/utils/generals'
+import { useWebSocketStore } from '@/store/webSocketStore'
 import BottomSheet from '@gorhom/bottom-sheet'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Command = () => {
   const { getActuator } = useActuatorState();
+  const { lastMessage } = useWebSocketStore();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [selectedFilter, setSelectedFilter] = useState(filters);
   const [actuators, setActuators] = useState(initialActuators);
+
+  const [sensors, setSensors] = useState(
+    initialSensors.map((sensor) => (
+      {
+        id: sensor.id,
+        name: sensor.name,
+        icon: sensor.icon,
+        command: sensor.command,
+        data: 'Not information'
+      }
+  )));
+
+  useEffect(() => {
+    if (lastMessage.type === 'sensor_update') {
+      setSensors(
+        initialSensors.map((sensor) => (
+          {
+            id: sensor.id,
+            name: sensor.name,
+            icon: sensor.icon,
+            command: sensor.command,
+            data: lastMessage.payload[sensor.id]
+          }
+        ))
+      ) 
+    }
+    
+  }, [lastMessage]);
   
   const toggleActuator = (id: string) => {
     setActuators(prev => 
@@ -125,7 +155,10 @@ const Command = () => {
               }}
             >
               {sensors.map((item) => (
-                <SensorCard key={item.id} {...item} />
+                <SensorCard 
+                  key={item.id}
+                  {... item}
+                />
               ))}
             </View>
           </>

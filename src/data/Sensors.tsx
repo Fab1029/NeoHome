@@ -15,7 +15,7 @@ export const sensors: Sensor[] = [
     command: 'i'
   },
   {
-    id: 'ligth',
+    id: 'light',
     name: 'Luz',
     icon: icons.lightIcon,
     command: 'h'

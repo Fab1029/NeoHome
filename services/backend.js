@@ -1,4 +1,4 @@
-const BASE_URL = "http://10.26.23.34:8000"
+const BASE_URL = "http://10.26.23.151:8000"
 
 export const healthCheck = async() => {
   try {
