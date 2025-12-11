@@ -18,10 +18,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Command = () => {
   const { getActuator } = useActuatorState();
-  const { lastMessage } = useWebSocketStore();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const [selectedFilter, setSelectedFilter] = useState(filters);
   const [actuators, setActuators] = useState(initialActuators);
+  const [selectedFilter, setSelectedFilter] = useState(filters);
+  const { lastMessage } = useWebSocketStore();
 
   const [sensors, setSensors] = useState(
     initialSensors.map((sensor) => (
@@ -34,8 +34,9 @@ const Command = () => {
       }
   )));
 
+
   useEffect(() => {
-    if (lastMessage.type === 'sensor_update') {
+    if (lastMessage?.type === 'sensor_update') {
       setSensors(
         initialSensors.map((sensor) => (
           {

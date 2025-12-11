@@ -14,14 +14,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [action, setAction] = useState<Action>();
-  const { connect, disconnect} = useWebSocketStore();
+  const { connect, connected, disconnect} = useWebSocketStore();
   const [processingAudio, setProcessingAudio] = useState(false);
   const [textRecording, setTextRecording] = useState(recordingTexts[0]);
-
+  
   useEffect(() => {
     connect();
     return () => disconnect();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!connected) {
+        console.log("Intentando reconectar WebSocket...");
+        connect();
+      }
+    }, 10000); // cada 5s (recomendado
+
+    return () => clearInterval(interval);
+  }, [connected]);
 
   return (
     <SafeAreaView
