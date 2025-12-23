@@ -1,21 +1,177 @@
+import ActuatorCard from '@/src/components/ActuatorCard'
 import BackGround from '@/src/components/BackGround'
+import DefaultButton from '@/src/components/DefaultButton'
+import Filter from '@/src/components/Filter'
+import SensorCard from '@/src/components/SensorCard'
 import { colors } from '@/src/constants/colors'
-import React from 'react'
-import { Text } from 'react-native'
+import fonts from '@/src/constants/fonts'
+import icons from '@/src/constants/icons'
+import { useActuatorState } from '@/src/context/ActionContext'
+import { actuators as initialActuators } from '@/src/data/Actuators'
+import { sensors as initialSensors } from '@/src/data/Sensors'
+import { filters } from '@/src/utils/generals'
+import { useWebSocketStore } from '@/store/webSocketStore'
+import BottomSheet from '@gorhom/bottom-sheet'
+import React, { useEffect, useRef, useState } from 'react'
+import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const command = () => {
+const Command = () => {
+  const { getActuator } = useActuatorState();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [actuators, setActuators] = useState(initialActuators);
+  const [selectedFilter, setSelectedFilter] = useState(filters);
+  const { lastMessage } = useWebSocketStore();
+
+  const [sensors, setSensors] = useState(
+    initialSensors.map((sensor) => (
+      {
+        id: sensor.id,
+        name: sensor.name,
+        icon: sensor.icon,
+        command: sensor.command,
+        data: 'Not information'
+      }
+  )));
+
+
+  useEffect(() => {
+    if (lastMessage?.type === 'sensor_update') {
+      console.log(lastMessage)
+      setSensors(
+        initialSensors.map((sensor) => (
+          {
+            id: sensor.id,
+            name: sensor.name,
+            icon: sensor.icon,
+            command: sensor.command,
+            data: lastMessage.payload[sensor.id]
+          }
+        ))
+      ) 
+    }
+    
+  }, [lastMessage]);
+  
+  const toggleActuator = (id: string) => {
+    setActuators(prev => 
+      prev.map(act => 
+        act.id === id
+          ? {...act, state: act.state === "On" ? "Off" : "On"}
+          : act
+      )
+    );
+  };
+
+  const handleOpenFilter = () => {
+    bottomSheetRef.current?.expand();
+  };
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
+        position: 'relative',
         backgroundColor: colors.background.primary
       }}
     >
-      <Text>command</Text>
-      <BackGround/>
+      <View
+        style={{
+          marginTop: 10,
+          marginRight: 20, 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          justifyContent: 'flex-end',   
+        }}
+      >
+        <DefaultButton icon={icons.filterIcon} onPress={handleOpenFilter}/>
+      </View>
+      
+      
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingBottom: 100
+        }}
+      >
+        {selectedFilter.find((f) => f.filter === filters[0].filter)?.value && (
+          <>
+            <Text
+              style={{
+                fontFamily: 'Bold',
+                fontSize: fonts.sizes.xlarge,
+                color: colors.text.primary,
+                marginVertical: 15
+              }}
+            >
+              Actuadores
+            </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap', 
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              columnGap: 30,
+              rowGap: 20,
+            }}
+          >
+            {actuators.map((item) => (
+              <ActuatorCard key={item.id} onPress={() => toggleActuator(item.id)}
+                id={item.id}
+                name={item.name}
+                icon={item.icon}
+                commandOn={item.commandOn}
+                commandOff={item.commandOff}
+                angleValue={item.angleValue}
+                commandMove={item.commandMove}
+                intensity={getActuator(item.id)?.intensity}
+                state={getActuator(item.id)?.state ?? 'Off'}
+              />
+            ))}
+          </View>
+          </>
+        )}
+        
+        {selectedFilter.find((f) => f.filter === filters[1].filter)?.value && (
+          <>
+            <Text
+              style={{
+                fontFamily: 'Bold',
+                fontSize: fonts.sizes.xlarge,
+                color: colors.text.primary,
+                marginBottom: 10
+              }}
+            >
+              Sensores
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                rowGap: 10
+              }}
+            >
+              {sensors.map((item) => (
+                <SensorCard 
+                  key={item.id}
+                  {... item}
+                />
+              ))}
+            </View>
+          </>
+          
+        )}
+        
+      </ScrollView>
+      <Filter bottomSheetRef={bottomSheetRef} selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter}/>
+      <BackGround />
     </SafeAreaView>
   )
 }
 
-export default command
+export default Command

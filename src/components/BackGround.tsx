@@ -6,6 +6,7 @@ const BackGround = () => {
   return (
     <View
         style={{
+            zIndex: -1,
             height: 200,
             bottom: 0,
             width: '100%',

@@ -3,39 +3,38 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
+import { ActuatorStateProvider } from '../context/ActionContext';
 import { PermissionProvider } from '../context/PermissionProvider';
 
-export default function RootLayout() {
-  const [fontsLoaded] = useFonts(
-    {
-      Bold: fonts.fonts.Bold,
-      Medium: fonts.fonts.Medium,
-      Regular: fonts.fonts.Regular
-    }
-  );
 
-  /* Cargar fuentes de textto */
+export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    Bold: fonts.fonts.Bold,
+    Medium: fonts.fonts.Medium,
+    Regular: fonts.fonts.Regular,
+  });
+
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-
   }, [fontsLoaded]);
 
+  if (!fontsLoaded) return null;
 
-  if (fontsLoaded) {
-    return (
-
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <PermissionProvider>
-        <StatusBar style='dark'/>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false}}
-          />
-        </Stack>
-      </PermissionProvider>
-    )
-  };
-  
+          <ActuatorStateProvider> 
+            <StatusBar style="dark" />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+            <Toast /*config={toastConfig}*/ />
+          </ActuatorStateProvider>
+        </PermissionProvider>
+    </GestureHandlerRootView>
+  );
 }
