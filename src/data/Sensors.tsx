@@ -1,10 +1,14 @@
 import icons from "../constants/icons";
 import { Sensor } from "../models/Sensors";
 
+export const sensorLevels = [
+  'NORMAL', 'WARNING', 'DANGER'
+]
+
 export const sensors: Sensor[] = [
   /*{
     id: 'movement',
-    name: 'Movimiento',
+    name: 'Movimiento',ß
     icon: icons.movementIcon,
     command: 'y'
   },*/

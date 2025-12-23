@@ -37,6 +37,7 @@ const Command = () => {
 
   useEffect(() => {
     if (lastMessage?.type === 'sensor_update') {
+      console.log(lastMessage)
       setSensors(
         initialSensors.map((sensor) => (
           {

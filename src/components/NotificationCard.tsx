@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { Image, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { colors } from '../constants/colors'
 import fonts from '../constants/fonts'
-import { sensorLevels } from '../data/Sensors'
-import { Sensor } from '../models/Sensors'
+import { notifyLevels } from '../data/Notifications'
+import { Notification } from '../models/Notification'
 
-const SensorCard = ({id, name, icon, data}: Sensor) => {
+const NotificationCard = ({id, title, message, time, type}: Notification) => {
     const [color, setColor] = useState(colors.surface.secondary);
-
-
+    
+    
     useEffect(() => {
-        switch(data.toLocaleLowerCase()){
-            case sensorLevels[0].toLocaleLowerCase():
-                setColor("gray");
-            break;
-            case sensorLevels[1].toLocaleLowerCase():
+        switch(type.toLocaleLowerCase()){
+            case notifyLevels[0].toLocaleLowerCase():
                 setColor(colors.warning);
             break;
-            case sensorLevels[2].toLocaleLowerCase():
+            case notifyLevels[1].toLocaleLowerCase():
                 setColor(colors.error);
             break;
         }
 
-    }, [data]);
+    }, [type]);
 
   return (
     <View
@@ -40,39 +37,35 @@ const SensorCard = ({id, name, icon, data}: Sensor) => {
                 color: colors.text.primary
             }}
         >
-            {name}
+            {title}
         </Text>
         <Text>
-            {data}
+            {message}
         </Text>
-        
+        <Text>
+            {time}
+        </Text>
         <View
             style={{
-                padding: 5,
-                height: 40,
-                width: 40,
-                borderRadius: '100%',
+                backgroundColor: '#fff',
+                width: 60,
+                borderRadius: 30,
+                paddingVertical: 5,
+                alignContent: 'center',
                 alignItems: 'center',
-                justifyContent: 'center',
                 alignSelf: 'flex-end',
-                backgroundColor: colors.surface.primary,
                 borderWidth: 1,
                 borderColor: color,
                 borderStyle: "dashed"
             }}
         >
-            <Image
-                style={{
-                width: '100%',
-                height: '100%',
-                resizeMode: 'cover',
-                tintColor: color
-                }}
-                source={icon}
-            />
+            <Text>
+                {type.toLocaleLowerCase()}
+            </Text>
         </View>
+        
     </View>
   )
 }
 
-export default SensorCard
+export default NotificationCard

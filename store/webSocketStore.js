@@ -4,7 +4,7 @@ export const useWebSocketStore = create((set, get) => ({
   socket: null,
   connected: false,
   lastMessage: null,
-  url: "ws://10.26.19.69:8000/ws",
+  url: `ws://10.26.22.21:8000/ws`,
 
   connect: () => {
     

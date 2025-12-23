@@ -29,7 +29,7 @@ export default function Index() {
         console.log("Intentando reconectar WebSocket...");
         connect();
       }
-    }, 10000); // cada 5s (recomendado
+    }, 10000); 
 
     return () => clearInterval(interval);
   }, [connected]);

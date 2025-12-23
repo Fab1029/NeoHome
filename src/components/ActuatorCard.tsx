@@ -146,7 +146,7 @@ const ActuatorCard = ({id, name, icon, commandOn, commandOff, state, angleValue,
           style={{flexDirection:'row', alignItems:'center', gap:5}}
         >
           <Slider
-          style={{ flex: 1, height: 30, transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
+          style={{ flex: 1, height: 30, /*transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]*/ }}
           /*style={{ flex: 1, height: 30 }}*/ //para iphone
           minimumValue={0}
           maximumValue={100}
